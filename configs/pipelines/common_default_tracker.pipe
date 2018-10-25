@@ -16,7 +16,7 @@ process tracker
   :IOU_accept_threshold                        0.500
   :IOU_reject_threshold                        0.100
   :track_search_threshold                      2
-  :gpu_list                                    0
+  :gpu_list                                    None
 
   relativepath siamese_model_path =            models/siamese_model.pt
   :siamese_batch_size                          64
