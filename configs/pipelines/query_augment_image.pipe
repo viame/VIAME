@@ -19,7 +19,7 @@ process augmenter
   :: pytorch_augmentation
   :resnet_model_input_size                     224
   :resnet_batch_size                           32
-  :gpu_list                                    0
+  :gpu_list                                    None
   :negative_sample_count                       500
   :use_historical_database                     false
   relativepath resnet_model_path =             models/pytorch-resnet50.pt
