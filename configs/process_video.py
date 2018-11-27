@@ -301,9 +301,9 @@ def process_video_kwiver( input_name, options, is_image_list=False, base_ovrd=''
   input_basename = os.path.basename( input_name )
 
   if multi_threaded:
-    log_info( 'Processing: {} on GPU {}'.format( input_basename, gpu ) + lb1 )
+    log_info( 'Processing: {} on CPU {}'.format( input_basename, gpu ) + lb1 )
   else:
-    log_info( 'Processing: {} on GPU... '.format( input_basename ) )
+    log_info( 'Processing: {} on CPU... '.format( input_basename ) )
 
   # Get video name without extension and full path
   if len( base_ovrd ) > 0:
