@@ -13,12 +13,13 @@ process out_adapt
 
 process downsampler
   :: downsample
-  _non_blocking =                              4
 
 connect from in_adapt.image
         to   downsampler.input_1
 connect from in_adapt.file_name
         to   downsampler.input_2
+connect from in_adapt.timestamp
+        to   downsampler.timestamp
 
 connect from in_adapt.image2
         to   downsampler.input_3
@@ -74,11 +75,15 @@ connect from optical_detector.detected_object_set
         to   out_adapt.detected_object_set
 connect from downsampler.output_2
         to   out_adapt.file_name
+connect from downsampler.timestamp
+        to   out_adapt.timestamp
 
 connect from thermal_detector.detected_object_set
         to   out_adapt.detected_object_set2
 connect from downsampler.output_4
         to   out_adapt.file_name2
+connect from downsampler.timestamp
+        to   out_adapt.timestamp2
 
 # ================================== CSV WRITERS ===================================
 

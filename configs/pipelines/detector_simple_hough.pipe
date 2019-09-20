@@ -1,51 +1,68 @@
+# Simple hough transform example detector
+
 # ==================================================================================
 # global pipeline config
 #
 config _pipeline:_edge
-       :capacity                               2
+       :capacity                               5
 
 # ==================================================================================
 
 include common_default_input_with_downsampler.pipe
 
 # ==================================================================================
+
 process detector
   :: image_object_detector
   :detector:type                               hough_circle
   :detector:hough_circle:dp                    1
-  :detector:hough_circle:min_dist              100
+  :detector:hough_circle:min_dist              10
   :detector:hough_circle:param1                200
-  :detector:hough_circle:param2                100
+  :detector:hough_circle:param2                20
   :detector:hough_circle:min_radius            0
   :detector:hough_circle:max_radius            0
 
-# ==================================================================================
-process draw
-  :: draw_detected_object_boxes
-  :default_line_thickness                      3
-
-# ==================================================================================
-process disp
-  :: image_viewer
-  :annotate_image                              true
-  :pause_time                                  0  # 0 means wait for keypress
-  :title                                       NOAA images
-#  :footer                                      NOAA images
-#  :header                                      header-header
-
-# ==================================================================================
-# connections
 connect from downsampler.output_1
         to   detector.image
 
-connect from detector.detected_object_set
-        to   draw.detected_object_set
-connect from downsampler.output_1
-        to   draw.image
+# ==================================================================================
 
-connect from downsampler.timestamp
-        to   disp.timestamp
-connect from draw.image
-        to   disp.image
+process detector_writer
+  :: detected_object_output
+
+  # Type of file to output
+  :file_name                                   computed_detections.csv
+  :writer:type                                 viame_csv
+
+connect from downsampler.output_2
+        to   detector_writer.image_file_name
+connect from detector.detected_object_set
+        to   detector_writer.detected_object_set
+
+# ==================================================================================
+
+#process draw
+#  :: draw_detected_object_boxes
+#  :default_line_thickness                      3
+
+#connect from detector.detected_object_set
+#        to   draw.detected_object_set
+#connect from downsampler.output_1
+#        to   draw.image
+
+# ==================================================================================
+
+#process disp
+#  :: image_viewer
+#  :annotate_image                              true
+#  :pause_time                                  0  # 0 means wait for keypress
+#  :title                                       NOAA images
+#  :footer                                      NOAA images
+#  :header                                      header-header
+
+#connect from downsampler.timestamp
+#        to   disp.timestamp
+#connect from draw.image
+#        to   disp.image
 
 # -- end of file --

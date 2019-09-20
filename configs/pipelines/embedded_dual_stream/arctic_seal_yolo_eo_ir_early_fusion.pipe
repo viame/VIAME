@@ -13,12 +13,13 @@ process out_adapt
 
 process downsampler
   :: downsample
-  _non_blocking =                              4
 
 connect from in_adapt.image
         to   downsampler.input_1
 connect from in_adapt.file_name
         to   downsampler.input_2
+connect from in_adapt.timestamp
+        to   downsampler.timestamp
 
 connect from in_adapt.image2
         to   downsampler.input_3
@@ -158,6 +159,8 @@ connect from fusion_detector_output.detected_object_set
         to   out_adapt.detected_object_set
 connect from downsampler.output_2
         to   out_adapt.file_name
+connect from downsampler.timestamp
+        to   out_adapt.timestamp
 
 # ==================================================================================
 

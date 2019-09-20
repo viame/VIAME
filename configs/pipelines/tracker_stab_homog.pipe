@@ -1,0 +1,32 @@
+config _scheduler
+  type = pythread_per_process
+
+include common_default_input_with_downsampler.pipe
+include common_default_detector_with_filter.pipe
+include common_stab_track_homog.pipe
+
+connect from downsampler.output_1
+        to   detector_input.image
+
+connect from downsampler.timestamp
+        to   stabilize.timestamp
+connect from downsampler.output_1
+        to   stabilize.image
+
+connect from detector_filter.detected_object_set
+	to   tracker.detected_object_set
+connect from downsampler.timestamp
+	to   tracker.timestamp
+
+# ================================= OUTPUT DATA ====================================
+process track_writer
+  :: write_object_track
+  :file_name                                   computed_tracks.csv
+  :writer:type                                 viame_csv
+  :writer:viame_csv:stream_identifier          input_list.txt
+
+# Connect inputs to track writer
+connect from tracker.object_track_set
+        to   track_writer.object_track_set
+connect from downsampler.timestamp
+        to   track_writer.timestamp

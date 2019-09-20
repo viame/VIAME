@@ -1,0 +1,315 @@
+# Based on Kwiver's stabilize_images.pipe
+process stabilize
+  :: stabilize_image
+
+# Algorithm to use for 'track_features'.
+# Must be one of the following options:
+#   - core
+#   - ocv_KLT
+    track_features:type = core
+
+  block track_features:core
+# Algorithm to use for 'descriptor_extractor'.
+# Must be one of the following options:
+#   - ocv_BRIEF
+#   - ocv_DAISY
+#   - ocv_FREAK
+#   - ocv_LATCH
+#   - ocv_LUCID
+#   - ocv_BRISK
+#   - ocv_ORB
+#   - ocv_SIFT
+#   - ocv_SURF
+#   - viscl
+    descriptor_extractor:type = ocv_SURF
+
+# The OpenCV cv::Algorithm type to use for 'extractor'.
+    block descriptor_extractor:ocv_SURF
+      extended           = false
+      hessian_threshold  = 5000
+      n_octave_layers    = 3
+      n_octaves          = 4
+      upright            = true
+    endblock
+
+
+# Algorithm to use for 'feature_detector'.
+# Must be one of the following options:
+#   - ocv_AGAST
+#   - ocv_FAST
+#   - ocv_GFTT
+#   - ocv_MSD
+#   - ocv_MSER
+#   - ocv_STAR
+#   - ocv_simple_blob
+#   - ocv_BRISK
+#   - ocv_ORB
+#   - ocv_SIFT
+#   - ocv_SURF
+#   - viscl
+    feature_detector:type                                                = ocv_SURF
+
+# The OpenCV cv::Algorithm type to use for 'detector'.
+    block feature_detector:ocv_SURF
+      extended           = false
+      hessian_threshold  = 5000
+      n_octave_layers    = 3
+      n_octaves          = 4
+      upright            = true
+    endblock
+
+
+# Algorithm to use for 'feature_matcher'.
+# Must be one of the following options:
+#   - homography_guided
+#   - ocv_brute_force
+#   - ocv_flann_based
+#   - fundamental_matrix_guided
+#   - viscl
+#   - vxl_constrained
+    feature_matcher:type                                                 = homography_guided
+
+    block feature_matcher:homography_guided
+# Algorithm to use for 'feature_matcher'.
+# Must be one of the following options:
+#   - homography_guided
+#   - ocv_brute_force
+#   - ocv_flann_based
+#   - fundamental_matrix_guided
+#   - viscl
+#   - vxl_constrained
+      feature_matcher1:type               = ocv_flann_based
+
+# Algorithm to use for 'homography_estimator'.
+# Must be one of the following options:
+#   - ocv
+#   - vxl
+      homography_estimator:type          = vxl
+
+# The acceptable error distance (in pixels) between warped and measured points
+# to be considered an inlier match.
+      inlier_scale                       = 10
+    endblock
+
+# Algorithm to use for 'loop_closer'.
+# Must be one of the following options:
+#   - bad_frames_only
+#   - exhaustive
+#   - keyframe
+#   - multi_method
+#   - vxl_homography_guided
+    loop_closer:type                                                     = multi_method
+
+# Number of loop closure methods to use.
+    loop_closer:multi_method:count                                       = 2
+
+
+# Algorithm to use for 'method1'.
+# Must be one of the following options:
+#   - bad_frames_only
+#   - exhaustive
+#   - keyframe
+#   - multi_method
+#   - vxl_homography_guided
+    loop_closer:multi_method:method1:type                                = bad_frames_only
+
+    block loop_closer:multi_method:method1:bad_frames_only
+# Should bad frame detection be enabled? This option will attempt to bridge the
+# gap between frames which don't meet certain criteria (percentage of feature
+# points tracked) and will instead attempt to match features on the current
+# frame against past frames to meet this criteria. This is useful when there can
+# be bad frames.
+      enabled             = true
+
+# Maximum number of frames to search in the past for matching to the end of the
+# last shot.
+      max_search_length   = 5
+
+# Number of frames for a new shot to be considered valid before attempting to
+# stitch to prior shots.
+      new_shot_length     = 2
+
+# The required percentage of features needed to be matched for a stitch to be
+# considered successful (value must be between 0.0 and 1.0).
+      percent_match_req   = 0.45
+
+
+# Algorithm to use for 'feature_matcher'.
+# Must be one of the following options:
+#   - homography_guided
+#   - ocv_brute_force
+#   - ocv_flann_based
+#   - fundamental_matrix_guided
+#   - viscl
+#   - vxl_constrained
+      feature_matcher:type = homography_guided
+
+      block feature_matcher:homography_guided
+# Algorithm to use for 'feature_matcher'.
+# Must be one of the following options:
+#   - homography_guided
+#   - ocv_brute_force
+#   - ocv_flann_based
+#   - fundamental_matrix_guided
+#   - viscl
+#   - vxl_constrained
+        feature_matcher1:type = ocv_flann_based
+
+# Algorithm to use for 'homography_estimator'.
+# Must be one of the following options:
+#   - ocv
+#   - vxl
+        homography_estimator:type = vxl
+
+# The acceptable error distance (in pixels) between warped and measured points
+# to be considered an inlier match.
+        inlier_scale = 10
+
+# The minimum required inlier point count. If there are less than this many
+# inliers, no matches will be output.
+        min_required_inlier_count = 0
+
+# The minimum required percentage of inlier points. If the percentage of points
+# considered inliers is less than this amount, no matches will be output.
+        min_required_inlier_percent = 0
+      endblock
+    endblock
+
+# Algorithm to use for 'method2'.
+# Must be one of the following options:
+#   - bad_frames_only
+#   - exhaustive
+#   - keyframe
+#   - multi_method
+#   - vxl_homography_guided
+    loop_closer:multi_method:method2:type                                = vxl_homography_guided
+
+    block loop_closer:multi_method:method2:vxl_homography_guided
+# Is long term loop closure enabled?
+      enabled       = true
+
+# Term which controls when we make new loop closure checkpoints. Everytime the
+# percentage of tracked features drops below this threshold, we generate a new
+# checkpoint.
+      checkpoint_percent_overlap = 0.85
+
+# Optional output location for a homography text file.
+#      homography_filename = ../test_area/homog_file.txt
+
+# Maximum past search distance in terms of number of frames.
+      max_checkpoint_frames = 1000
+
+
+# Algorithm to use for 'feature_matcher'.
+# Must be one of the following options:
+#   - homography_guided
+#   - ocv
+      feature_matcher:type = homography_guided
+
+# Algorithm to use for 'homography_estimator'.
+# Must be one of the following options:
+#   - ocv
+#   - vxl
+      block feature_matcher:homography_guided
+        homography_estimator:type = vxl
+
+# Algorithm to use for 'feature_matcher'.
+# Must be one of the following options:
+#   - homography_guided
+#   - ocv_brute_force
+#   - ocv_flann_based
+#   - fundamental_matrix_guided
+#   - viscl
+#   - vxl_constrained
+        feature_matcher1:type = ocv_flann_based
+
+# The acceptable error distance (in pixels) between warped and measured points
+# to be considered an inlier match.
+        inlier_scale = 2
+
+# The minimum required inlier point count. If there are less than this many
+# inliers, no matches will be output.
+        min_required_inlier_count = 100
+
+# The minimum required percentage of inlier points. If the percentage of points
+# considered inliers is less than this amount, no matches will be output.
+        min_required_inlier_percent = 0.20
+      endblock
+
+
+# Algorithm to use for 'ref_computer'.
+# Must be one of the following options:
+#   - core
+      ref_computer:type = core
+
+      block ref_computer:core
+# Backprojection threshold in terms of L2 distance (number of pixels)
+        backproject_threshold = 4
+
+# Algorithm to use for 'estimator'.
+# Must be one of the following options:
+#   - ocv
+#   - vxl
+        estimator:type = vxl
+
+# After how many frames should we forget all info about a track?
+        forget_track_threshold = 5
+
+# The acceptable error distance (in pixels) between warped and measured points
+# to be considered an inlier match.
+        inlier_scale = 10
+
+# Minimum track length to use for homography regression
+        min_track_length = 1
+
+# Should we remove extra points if the backproject error is high?
+        use_backproject_error = false
+      endblock
+    endblock
+
+  endblock
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# config for homography_generator
+#
+# Algorithm to use for 'ref_computer'.
+# Must be one of the following options:
+#   - core
+  homography_generator:type = core
+
+  block homography_generator:core
+# Backprojection threshold in terms of L2 distance (number of pixels)
+    backproject_threshold = 4
+
+# Algorithm to use for 'estimator'.
+# Must be one of the following options:
+#   - ocv
+#   - vxl
+    estimator:type = vxl
+
+# After how many frames should we forget all info about a track?
+    forget_track_threshold = 5
+
+# The acceptable error distance (in pixels) between warped and measured points
+# to be considered an inlier match.
+    inlier_scale = 10
+
+# Minimum track length to use for homography regression
+    min_track_length = 1
+
+# Should we remove extra points if the backproject error is high?
+    use_backproject_error = false
+  endblock
+
+# ================================================================
+process tracker
+  :: simple_homog_tracker
+  min_iou = 0.2
+
+# ================================================================
+# connections
+
+connect from stabilize.homography_src_to_ref
+        to   tracker.homography_src_to_ref
+
+# -- end of file --

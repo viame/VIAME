@@ -7,8 +7,8 @@ if( EXISTS ${VIAME_BUILD_INSTALL_PREFIX}/examples/detector_pipelines )
 endif()
 
 # Check for old VTK versions
-if( EXISTS ${VIAME_BUILD_PREFIX}/src/fletch-build/CMakeCache.txt )
-  file( READ ${VIAME_BUILD_PREFIX}/src/fletch-build/CMakeCache.txt TMPTXT )
+if( EXISTS ${VIAME_FLETCH_BUILD_DIR}/CMakeCache.txt )
+  file( READ ${VIAME_FLETCH_BUILD_DIR}/CMakeCache.txt TMPTXT )
   string( FIND "${TMPTXT}" "VTK_SELECT_VERSION:STRING=6.2" matchres )
   message( STATUS ${matchres} )
   if( NOT ${matchres} EQUAL -1 )

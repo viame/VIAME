@@ -158,7 +158,7 @@ foreach( LIB ${PYTORCH_LIBRARIES} )
       ${CMAKE_COMMAND}
         -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
         -DWHEEL_DIR=${LIBRARY_PIP_BUILD_DIR}
-        -P ${CMAKE_SOURCE_DIR}/cmake/install_python_wheel.cmake )
+        -P ${VIAME_CMAKE_DIR}/install_python_wheel.cmake )
   endif()
 
   set( LIBRARY_PYTHON_BUILD

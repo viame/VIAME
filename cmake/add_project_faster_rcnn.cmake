@@ -14,11 +14,11 @@ if( NOT WIN32 )
     PREFIX ${VIAME_BUILD_PREFIX}
     SOURCE_DIR ${VIAME_PACKAGES_DIR}/py-faster-rcnn/lib
     CONFIGURE_COMMAND ${CMAKE_COMMAND} -E create_symlink
-      ${VIAME_BUILD_PREFIX}/src/fletch-build/build/src/Caffe-build
+      ${VIAME_FLETCH_BUILD_DIR}/build/src/Caffe-build
       ${VIAME_PACKAGES_DIR}/py-faster-rcnn/caffe-fast-rcnn
     BUILD_COMMAND cd ${VIAME_PACKAGES_DIR}/py-faster-rcnn/lib && make
     INSTALL_COMMAND ${CMAKE_COMMAND}
-      -DVIAME_CMAKE_DIR:PATH=${CMAKE_SOURCE_DIR}/cmake
+      -DVIAME_CMAKE_DIR:PATH=${VIAME_CMAKE_DIR}
       -P ${VIAME_SOURCE_DIR}/cmake/custom_faster_rcnn_install.cmake
     )
 endif()

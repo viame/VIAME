@@ -95,6 +95,15 @@ if( VIAME_DOWNLOAD_MODELS )
       ${VIAME_DOWNLOAD_DIR}/models-habcam-v2.1.0.tar.gz
       ${CMAKE_CURRENT_SOURCE_DIR}/pipelines )
   endif()
+
+  # Transformation Models
+  if( VIAME_DOWNLOAD_MODELS-ARCTIC-SEAL )
+    DownloadAndExtract(
+      https://data.kitware.com/api/v1/item/5d6edf99d35580e6dcddbc3b/download
+      1a122a8a5ab5e59ca8a149954da8a252
+      ${VIAME_DOWNLOAD_DIR}/models-arctic_seal_transforms-v0.2.tar.gz
+      ${CMAKE_CURRENT_SOURCE_DIR}/pipelines )
+  endif()
 endif()
 
 ###
@@ -131,6 +140,7 @@ set( CORE_PIPELINE_FILES
   pipelines/common_default_tracker.pipe
   pipelines/common_generic_detector.pipe
   pipelines/common_generic_detector_with_filter.pipe
+  pipelines/common_stab_track_homog.pipe
   pipelines/database_apply_svm_models.pipe
   pipelines/detector_default.pipe
   pipelines/detector_extract_chips.pipe
@@ -163,6 +173,7 @@ set( CORE_PIPELINE_FILES
   pipelines/tracker_default.sfd.pipe
   pipelines/tracker_generic.pipe
   pipelines/tracker_local.pipe
+  pipelines/tracker_stab_homog.pipe
   pipelines/tracker_svm_models.pipe
   pipelines/train_color_freq_aug.pipe
   pipelines/train_hue_shifting_only_aug.pipe
@@ -347,4 +358,9 @@ install( DIRECTORY   pipelines/templates
 if( VIAME_DOWNLOAD_MODELS )
   install( DIRECTORY   pipelines/models
            DESTINATION configs/pipelines )
+
+  if( VIAME_DOWNLOAD_MODELS-ARCTIC-SEAL )
+    install( DIRECTORY   pipelines/transformations
+             DESTINATION configs/pipelines )
+  endif()
 endif()

@@ -56,5 +56,7 @@ process output
 
 connect from filter.image
         to   output.image
+connect from input.file_name
+        to   output.image_file_name
 
 # -- end of file --
