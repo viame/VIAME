@@ -1,0 +1,46 @@
+---
+## docker-compose for building and running VIAME containers
+## This pulls from .env file, as well as any environment variables
+## If you want to mount source code for live updates, uncomment the ${PWD} line
+
+version: '3'
+services:
+  ## "Basic" VIAME headless build. Contains only install dir files
+  viame:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    tty: true
+    image: viame/viame:latest
+    command: "bash"
+
+  ## Development image. Preserves entire build tree so you can tinker
+  dev-viame:
+    build:
+      context: .
+      dockerfile: docker/dev_viame.docker
+      args:
+        BASE_IMAGE: "${BASE_IMAGE}"
+    tty: true
+    network_mode: host
+    volumes:
+      - "workspace:/ws"
+      - "build_vol:/build"
+      - "home_vol:/root"
+      - "${PWD}:/src/viame:ro"
+
+    image: viame/dev-viame:latest
+    command: "bash"
+
+
+volumes:
+  workspace:
+    labels:
+      com.kitware.description: "Persistence for interactive development"
+  build_vol:
+    labels:
+      com.kitware.description: "Persistence for build tree"
+  home_vol:
+    labels:
+      com.kitware.description: "Home dir persistence. Can be swapped in across containers"
+...

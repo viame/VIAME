@@ -36,6 +36,7 @@ _build
 # Compiled Python
 *.pyc
 __pycache__
+.idea
 
 build-*
 build

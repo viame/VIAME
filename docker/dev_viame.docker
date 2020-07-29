@@ -1,0 +1,117 @@
+ARG BASE_IMAGE=nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04
+FROM $BASE_IMAGE as base0
+
+## === === === === Live/Development Viame === === === ===
+## This image is for live development, in other words, it deviates from the "typical"
+## production containerization mindset and is closer to a virtual machine.
+## Therefore, there are some "unusual" techniques used here to achive a happy medium
+## between an invariant docker image and a comfortable build environment
+
+# Bare-bones boilerplate system deps
+RUN apt-get update -qq &&\
+    apt-get install -qq \
+        curl \
+    && apt-get install -qq --no-install-recommends \
+        apt-transport-https \
+        apt-utils \
+        ca-certificates \
+        git \
+        openssl \
+        software-properties-common \
+        wget \
+        zip unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+## === === === === System Deps for VIAME/Fletch === === === ===
+
+FROM base0 as base1
+
+RUN apt-get update -qq && apt-get install -qq --no-install-recommends \
+        libgl1-mesa-dev \
+        libexpat1-dev \
+        libgtk2.0-dev \
+        libxt-dev \
+        libxml2-dev \
+        libssl-dev \
+        liblapack-dev \
+        python3-dev \
+        zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+## === === === === ===  Interaction Tools === === === === ===
+## Add some tools to allow us to use the shell interactively inside the container
+## with some ergonomics. This image is gonna be huge, so what is a few mb? ‾\_(ツ)_/‾
+FROM base1 as base2
+
+RUN apt-get update -qq && apt-get install -qq --no-install-recommends \
+        vim \
+        nano \
+        zsh \
+        tree \
+        mlocate \
+        tmux \
+    && rm -rf /var/lib/apt/lists/*
+
+
+## === === === === ===  Compile-time dependencies === === === === ===
+## Since this is a dev image, these will end up rolled into the final image
+FROM base2 as compiler
+
+# Need CMake >= 3.11.4 for VIAME,
+# Thus, install latest stable CMake 3.14.1
+RUN curl https://apt.kitware.com/keys/kitware-archive-latest.asc -L 2>/dev/null | apt-key add - \
+    && apt-add-repository "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main" \
+    && apt-get update -y \
+    && apt-get install -y \
+        cmake \
+        python-dev \
+        python3-dev \
+    &&\
+    apt-get install -qq --no-install-recommends \
+        build-essential\
+        ninja-build \
+        pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
+## Not sure if py2 is needed, installing anyways
+## -- -- -- -- -- --  Get pip the preferred way -- -- -- -- -- --
+RUN curl https://bootstrap.pypa.io/get-pip.py -o /root/get-pip.py \
+    && python3 /root/get-pip.py \
+    && python2 /root/get-pip.py
+
+RUN pip2 install --no-cache-dir --upgrade pip numpy &&\
+    pip3 install --no-cache-dir --upgrade pip numpy
+## -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+## === === === === ===  Building VIAME === === === === ===
+FROM compiler as viame
+
+## Filesystem structure:
+## /src  - This stores all source code and is meant to be mounted read-only.
+##           Code changes should be made on the host system. However, due to fletch
+##           and perhaps some flags I am missing, viame's code dir cannot be RO.
+##           WIP until I can find a more harmonious way of doing this.
+## /root - This is the docker user's home, and acts as such.
+##           Can be mounted as a named volume to save bash history, caches, etc
+##           Avoid putting stuff in here during image build
+## /ws   - Repo code goes here, since it needs to be read-write. Mount as named volume.
+## /build- This is where building occurs. Mount as named volume.
+
+
+ENV WS_DIR=/ws \
+    SRC_DIR=/src \
+    BUILD_DIR=/build \
+    VIAME_REPO_DIR=/ws/viame
+
+WORKDIR /ws
+
+RUN mkdir -p ${WS_DIR}/viame ${SRC_DIR}/viame ${BUILD_DIR}/viame
+
+## Get VIAME and pull all the submodules
+RUN git clone https://github.com/Kitware/VIAME.git ${VIAME_REPO_DIR}
+
+## Splitting clone and the submodule pull gives us smaller layers
+RUN cd ${VIAME_REPO_DIR} &&\
+    git submodule update --init --recursive
+
+## Leave building up to the end-user
