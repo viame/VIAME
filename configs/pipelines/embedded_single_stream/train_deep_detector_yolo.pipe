@@ -23,7 +23,7 @@ process detector_trainer
   block trainer:darknet
     relativepath net_config =                 ../models/yolo_v3_train.cfg
     relativepath seed_weights =               ../models/yolo_v3_seed.wt
-    relativepath pipeline_template =          ../templates/embedded_yolo.pipe
+    relativepath pipeline_template =          ../templates/detector_yolo.pipe
 
     :model_type                               yolov3
     :image_reader:type                        vxl

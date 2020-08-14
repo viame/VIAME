@@ -69,7 +69,7 @@ process detector_trainer
     :netharn:timeout                            1209600
     :netharn:batch_size                         auto
     relativepath netharn:backbone =             ../models/pytorch_resnext101.pth
-    relativepath netharn:pipeline_template =    ../templates/embedded_netharn.pipe
+    relativepath netharn:pipeline_template =    ../templates/detector_netharn.pipe
   endblock
 
 connect from in_adapt.image
