@@ -258,13 +258,6 @@ set( CORE_PIPELINE_FILES
   pipelines/train_aug_split_and_stereo.pipe
   pipelines/train_aug_split.pipe
   pipelines/train_aug_warp_ir_to_eo.pipe
-  pipelines/train_yolo_544.viame_csv.conf
-  pipelines/train_yolo_704.habcam.conf
-  pipelines/train_yolo_704.kw18.conf
-  pipelines/train_yolo_704.viame_csv.conf
-  pipelines/train_yolo_alt_704.viame_csv.conf
-  pipelines/train_yolo_stereo_704.habcam.conf
-  pipelines/train_yolo_wtf_704.viame_csv.conf
   pipelines/utility_add_head_tail_keypoints.pipe
   pipelines/utility_add_segmentations_watershed.pipe
   pipelines/utility_empty_frame_lbls_1fr.pipe
@@ -388,15 +381,10 @@ endif()
 
 if( VIAME_ENABLE_PYTORCH-NETHARN )
   set( CORE_PIPELINE_FILES ${CORE_PIPELINE_FILES}
-    pipelines/train_detector_netharn_cfrnn.habcam.conf
-    pipelines/train_detector_netharn_cfrnn_motion.viame_csv.conf
-    pipelines/train_detector_netharn_cfrnn_nf.viame_csv.conf
-    pipelines/train_detector_netharn_cfrnn_special.viame_csv.conf
     pipelines/train_detector_netharn_cfrnn.viame_csv.conf
-    pipelines/train_detector_netharn_cfrnn_wtf.viame_csv.conf
+    pipelines/train_detector_netharn_cfrnn_motion.viame_csv.conf
     pipelines/train_detector_netharn_mask_rcnn.viame_csv.conf
     pipelines/train_object_classifier_netharn_resnet.viame_csv.conf
-    pipelines/train_frame_classifier_netharn_resnet_nf.viame_csv.conf
     pipelines/train_frame_classifier_netharn_resnet.viame_csv.conf )
 endif()
 
