@@ -204,13 +204,8 @@ set( CORE_PIPELINE_FILES
   pipelines/common_stabilized_iou_tracker.pipe
   pipelines/database_apply_svm_models.pipe
   pipelines/detector_camtrawl.pipe
-  pipelines/detector_extract_chips.pipe
   pipelines/detector_fish_without_motion.pipe
   pipelines/detector_generic_proposals.pipe
-  pipelines/detector_local.pipe
-  pipelines/detector_local_left.pipe
-  pipelines/detector_simple_hough.pipe
-  pipelines/detector_svm_models.pipe
   pipelines/display_annotations.pipe
   pipelines/draw_detections_on_images.pipe
   pipelines/extract_chips_from_detections.pipe
@@ -243,9 +238,7 @@ set( CORE_PIPELINE_FILES
   pipelines/tracker_fish.pipe
   pipelines/tracker_fish.sfd.pipe
   pipelines/tracker_generic.pipe
-  pipelines/tracker_local.pipe
   pipelines/tracker_stabilized_iou.pipe
-  pipelines/tracker_svm_models.pipe
   pipelines/train_aug_add_color_freq.pipe
   pipelines/train_aug_add_double_motion.pipe
   pipelines/train_aug_add_motion_and_color_freq.pipe
