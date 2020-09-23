@@ -260,14 +260,7 @@ set( CORE_PIPELINE_FILES
   pipelines/train_motion_aug.pipe
   pipelines/train_split_and_stereo_aug.pipe
   pipelines/train_split_aug.pipe
-  pipelines/train_warp_ir_to_eo_aug.pipe
-  pipelines/train_yolo_544.viame_csv.conf
-  pipelines/train_yolo_704.habcam.conf
-  pipelines/train_yolo_704.kw18.conf
-  pipelines/train_yolo_704.viame_csv.conf
-  pipelines/train_yolo_alt_704.viame_csv.conf
-  pipelines/train_yolo_stereo_704.habcam.conf
-  pipelines/train_yolo_wtf_704.viame_csv.conf )
+  pipelines/train_warp_ir_to_eo_aug.pipe )
 
 if( VIAME_ENABLE_VIVIA )
   set( GUI_PIPELINE_FILES
@@ -370,20 +363,10 @@ if( VIAME_ENABLE_OPENCV )
     pipelines/register_multimodal_unsync_ocv.pipe )
 endif()
 
-if( VIAME_ENABLE_PYTORCH )
-  set( CORE_PIPELINE_FILES ${CORE_PIPELINE_FILES}
-    pipelines/train_mmdet_cascade.habcam.conf
-    pipelines/train_mmdet_cascade.viame_csv.conf)
-endif()
-
 if( VIAME_ENABLE_PYTORCH-NETHARN )
   set( CORE_PIPELINE_FILES ${CORE_PIPELINE_FILES}
     pipelines/train_netharn_cascade.viame_csv.conf
-    pipelines/train_netharn_cascade.habcam.conf
-    pipelines/train_netharn_cascade_nf.viame_csv.conf
-    pipelines/train_netharn_cascade_wtf.viame_csv.conf
-    pipelines/train_netharn_resnet.viame_csv.conf
-    pipelines/train_netharn_resnet_nf.viame_csv.conf )
+    pipelines/train_netharn_resnet.viame_csv.conf )
 endif()
 
 if( VIAME_ENABLE_PYTORCH AND VIAME_ENABLE_PYTORCH-PYSOT )
