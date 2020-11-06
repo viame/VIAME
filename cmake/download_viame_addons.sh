@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Configurable Input Paths
-export VIAME_INSTALL="$(cd "$(dirname ${BASH_SOURCE[0]})" && pwd)/.."
+export VIAME_INSTALL=/opt/noaa/viame
 export DOWNLOAD_LOCATION=~/VIAME-Addons
 
 # Ensure Download Location is Created
