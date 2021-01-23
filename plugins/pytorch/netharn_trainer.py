@@ -100,7 +100,7 @@ class NetHarnTrainer( TrainDetector ):
         self._resize_option = "original_and_resized"
         self._max_scale_wrt_chip = 2.0
         self._no_format = False
-        self._allow_unicode = "auto"
+        self._allow_unicode = "False"
         self._aux_image_labels = ""
         self._aux_image_extensions = ""
         self._area_lower_bound = 0
