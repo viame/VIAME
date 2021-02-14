@@ -269,7 +269,7 @@ if( VIAME_ENABLE_DARKNET )
     pipelines/train_yolo_640.viame_csv.conf
     pipelines/train_yolo_704.habcam.conf
     pipelines/train_yolo_704.kw18.conf
-    pipelines/train_yolo_full_res.csv.conf )
+    pipelines/train_yolo_full_res.viame_csv.conf )
 endif()
 
 if( VIAME_ENABLE_VIVIA )
