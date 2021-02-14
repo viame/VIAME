@@ -256,20 +256,21 @@ set( CORE_PIPELINE_FILES
   pipelines/train_motion_only_aug.pipe
   pipelines/train_split_and_stereo_aug.pipe
   pipelines/train_split_aug.pipe
-  pipelines/train_warp_ir_to_eo_aug.pipe
-  pipelines/train_yolo_544.viame_csv.conf
-  pipelines/train_yolo_704.habcam.conf
-  pipelines/train_yolo_704.kw18.conf
-  pipelines/train_yolo_704.viame_csv.conf
-  pipelines/train_yolo_alt_704.viame_csv.conf
-  pipelines/train_yolo_stereo_704.habcam.conf
-  pipelines/train_yolo_wtf_704.viame_csv.conf
   pipelines/utility_add_head_tail_keypoints.pipe
   pipelines/utility_add_segmentations_watershed.pipe
   pipelines/utility_empty_frame_lbls_1fr.pipe
   pipelines/utility_empty_frame_lbls_10fr.pipe
   pipelines/utility_empty_frame_lbls_100fr.pipe
   pipelines/utility_empty_frame_lbls_1000fr.pipe )
+  pipelines/train_warp_ir_to_eo_aug.pipe )
+
+if( VIAME_ENABLE_DARKNET )
+  set( CORE_PIPELINE_FILES ${CORE_PIPELINE_FILES}
+    pipelines/train_yolo_640.viame_csv.conf
+    pipelines/train_yolo_704.habcam.conf
+    pipelines/train_yolo_704.kw18.conf
+    pipelines/train_yolo_full_res.csv.conf )
+endif()
 
 if( VIAME_ENABLE_VIVIA )
   set( GUI_PIPELINE_FILES
