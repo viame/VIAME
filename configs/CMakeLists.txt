@@ -119,15 +119,9 @@ if( VIAME_DOWNLOAD_MODELS )
   # YOLO Model Files
   if( VIAME_ENABLE_DARKNET )
     DownloadAndExtract(
-      https://data.kitware.com/api/v1/item/5f6589e850a41e3d199942a2/download
-      8d5e963d14ce5f717f149277710c2dc6
-      ${VIAME_DOWNLOAD_DIR}/models-yolo_v2_seed_model-v1.3.0.zip
-      ${CMAKE_CURRENT_SOURCE_DIR}/pipelines )
-
-    DownloadAndExtract(
-      https://data.kitware.com/api/v1/item/5f6589eb50a41e3d199942ae/download
-      a30f0a5fbc8dc729b3ee2fe38f888357
-      ${VIAME_DOWNLOAD_DIR}/models-yolo_v3_seed_model-v1.3.0.zip
+      https://data.kitware.com/api/v1/item/602b56c72fa25629b9788909/download
+      a4a7805499527c58b5165f0901fc0ec3
+      ${VIAME_DOWNLOAD_DIR}/models-yolo_v4_seed_model-v1.0.0.zip
       ${CMAKE_CURRENT_SOURCE_DIR}/pipelines )
 
     if( VIAME_DOWNLOAD_MODELS-MOUSS )
