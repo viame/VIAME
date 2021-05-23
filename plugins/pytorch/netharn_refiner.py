@@ -29,12 +29,12 @@
 
 from __future__ import print_function
 
-from vital.algo import RefineDetections
+from kwiver.vital.algo import RefineDetections
 
-from vital.types import BoundingBox
-from vital.types import DetectedObjectSet
-from vital.types import DetectedObject
-from vital.types import DetectedObjectType
+from kwiver.vital.types import BoundingBoxD
+from kwiver.vital.types import DetectedObjectSet
+from kwiver.vital.types import DetectedObject
+from kwiver.vital.types import DetectedObjectType
 
 from distutils.util import strtobool
 
@@ -269,7 +269,7 @@ def __vital_algorithm_register__():
         def _register_algorithm(cls, name=None, desc=''):
             if name is None:
                 name = cls.__name__
-            from vital.algo import algorithm_factory
+            from kwiver.vital.algo import algorithm_factory
             if not algorithm_factory.has_algorithm_impl_name(cls.static_type_name(), name):
                 algorithm_factory.add_algorithm(name, desc, cls)
                 algorithm_factory.mark_algorithm_as_loaded(name)
@@ -305,7 +305,7 @@ def __vital_algorithm_register__():
         # We could also play with adding class member variables for the lazy
         # initialization. There is lots of room to make this better / easier.
     """
-    from vital.algo import algorithm_factory
+    from kwiver.vital.algo import algorithm_factory
 
     # Register Algorithm
     implementation_name = "netharn"

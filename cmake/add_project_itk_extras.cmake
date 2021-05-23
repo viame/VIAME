@@ -2,7 +2,7 @@
 #
 # Required symbols are:
 #   VIAME_BUILD_PREFIX - where packages are built
-#   VIAME_BUILD_INSTALL_PREFIX - directory install target
+#   VIAME_INSTALL_PREFIX - directory install target
 #   VIAME_PACKAGES_DIR - location of git submodule packages
 #   VIAME_ARGS_COMMON -
 ##
@@ -22,7 +22,7 @@ ExternalProject_Add( itk_module_tps
     ${VIAME_ARGS_VXL}
     ${VIAME_ARGS_ITK}
     -DBUILD_TESTING:BOOL=OFF
-  INSTALL_DIR ${VIAME_BUILD_INSTALL_PREFIX}
+  INSTALL_DIR ${VIAME_INSTALL_PREFIX}
 )
 
 if( VIAME_FORCEBUILD )
@@ -40,21 +40,9 @@ endif()
 
 if( VIAME_ENABLE_PYTHON )
 
-  set( PYTHON_BASEPATH
-    ${VIAME_BUILD_INSTALL_PREFIX}/lib/python${PYTHON_VERSION} )
-
   if( WIN32 )
-    set( CUSTOM_PYTHONPATH
-      ${PYTHON_BASEPATH};${PYTHON_BASEPATH}/site-packages;${PYTHON_BASEPATH}/dist-packages )
-    set( CUSTOM_PATH
-      ${VIAME_BUILD_INSTALL_PREFIX}/bin;$ENV{PATH} )
-    string( REPLACE ";" "----" CUSTOM_PYTHONPATH "${CUSTOM_PYTHONPATH}" )
-    string( REPLACE ";" "----" CUSTOM_PATH "${CUSTOM_PATH}" )
-  else()
-    set( CUSTOM_PYTHONPATH
-      ${PYTHON_BASEPATH}:${PYTHON_BASEPATH}/site-packages:${PYTHON_BASEPATH}/dist-packages )
-    set( CUSTOM_PATH
-      ${VIAME_BUILD_INSTALL_PREFIX}/bin:$ENV{PATH} )
+    string( REPLACE ";" "----" VIAME_PYTHON_PATH "${VIAME_PYTHON_PATH}" )
+    string( REPLACE ";" "----" VIAME_EXECUTABLES_PATH "${VIAME_EXECUTABLES_PATH}" )
   endif()
 
   if( VIAME_SYMLINK_PYTHON )
@@ -68,10 +56,10 @@ if( VIAME_ENABLE_PYTHON )
   endif()
 
   set( KEYPOINTGUI_INSTALL
-    ${CMAKE_COMMAND} -E env "PYTHONPATH=${CUSTOM_PYTHONPATH}"
-                            "PATH=${CUSTOM_PATH}"
-                            "PYTHONUSERBASE=${VIAME_BUILD_INSTALL_PREFIX}"
-      ${PYTHON_EXECUTABLE} -m ${KEYPOINTGUI_PIP_CMD}
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${VIAME_PYTHON_PATH}"
+                            "PATH=${VIAME_EXECUTABLES_PATH}"
+                            "PYTHONUSERBASE=${VIAME_INSTALL_PREFIX}"
+      ${Python_EXECUTABLE} -m ${KEYPOINTGUI_PIP_CMD}
     )
 
   ExternalProject_Add( keypointgui
@@ -83,7 +71,7 @@ if( VIAME_ENABLE_PYTHON )
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ${KEYPOINTGUI_INSTALL}
     INSTALL_COMMAND ""
-    INSTALL_DIR ${VIAME_BUILD_INSTALL_PREFIX}
+    INSTALL_DIR ${VIAME_INSTALL_PREFIX}
     LIST_SEPARATOR "----"
     )
 endif()

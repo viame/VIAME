@@ -34,13 +34,13 @@ from __future__ import absolute_import
 import sys
 import numpy as np
 
-from kwiver.kwiver_process import KwiverProcess
-from sprokit.pipeline import process
+from kwiver.sprokit.processes.kwiver_process import KwiverProcess
+from kwiver.sprokit.pipeline import process
 
-from vital.types import Image
-from vital.types import BoundingBox
-from vital.types import DetectedObject, DetectedObjectSet
-from vital.types import ObjectTrackState, Track, ObjectTrackSet
+from kwiver.vital.types import (
+    BoundingBoxD, DetectedObject, DetectedObjectSet,
+    Image, ObjectTrackState, ObjectTrackSet, Track,
+)
 
 import viame.arrows.pytorch.mdnet_tracker as mdnet
 
@@ -210,7 +210,7 @@ class MDNetTrackerProcess(KwiverProcess):
                     break
             bbox, score = self._trackers[tid].update(img_npy, likely_bbox=recc_bbox)
             if score > mdnet.opts['success_thr']:
-                cbox = BoundingBox(
+                cbox = BoundingBoxD(
                   bbox[0], bbox[1], bbox[0]+bbox[2], bbox[1]+bbox[3])
                 new_state = ObjectTrackState(timestamp, cbox, score)
                 self._tracks[tid].append(new_state)
@@ -239,7 +239,7 @@ class MDNetTrackerProcess(KwiverProcess):
 
 # ==============================================================================
 def __sprokit_register__():
-    from sprokit.pipeline import process_factory
+    from kwiver.sprokit.pipeline import process_factory
 
     module_name = 'python:viame.pytorch.MDNetTrackerProcess'
 

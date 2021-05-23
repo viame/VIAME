@@ -32,7 +32,7 @@ from viame.processes.smqtk import smqtk_process_query
 from viame.processes.smqtk import smqtk_object_track_descriptors
 
 def __sprokit_register__():
-    from sprokit.pipeline import process_factory
+    from kwiver.sprokit.pipeline import process_factory
 
     module_name = 'python:smqtk.smqtk_processes'
 

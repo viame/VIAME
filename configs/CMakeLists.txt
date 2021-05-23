@@ -119,15 +119,9 @@ if( VIAME_DOWNLOAD_MODELS )
   # YOLO Model Files
   if( VIAME_ENABLE_DARKNET )
     DownloadAndExtract(
-      https://data.kitware.com/api/v1/item/5f6589e850a41e3d199942a2/download
-      8d5e963d14ce5f717f149277710c2dc6
-      ${VIAME_DOWNLOAD_DIR}/models-yolo_v2_seed_model-v1.3.0.zip
-      ${CMAKE_CURRENT_SOURCE_DIR}/pipelines )
-
-    DownloadAndExtract(
-      https://data.kitware.com/api/v1/item/5f6589eb50a41e3d199942ae/download
-      a30f0a5fbc8dc729b3ee2fe38f888357
-      ${VIAME_DOWNLOAD_DIR}/models-yolo_v3_seed_model-v1.3.0.zip
+      https://data.kitware.com/api/v1/item/602b56c72fa25629b9788909/download
+      a4a7805499527c58b5165f0901fc0ec3
+      ${VIAME_DOWNLOAD_DIR}/models-yolo_v4_seed_model-v1.0.0.zip
       ${CMAKE_CURRENT_SOURCE_DIR}/pipelines )
 
     if( VIAME_DOWNLOAD_MODELS-MOUSS )
@@ -257,19 +251,20 @@ set( CORE_PIPELINE_FILES
   pipelines/train_split_and_stereo_aug.pipe
   pipelines/train_split_aug.pipe
   pipelines/train_warp_ir_to_eo_aug.pipe
-  pipelines/train_yolo_544.viame_csv.conf
-  pipelines/train_yolo_704.habcam.conf
-  pipelines/train_yolo_704.kw18.conf
-  pipelines/train_yolo_704.viame_csv.conf
-  pipelines/train_yolo_alt_704.viame_csv.conf
-  pipelines/train_yolo_stereo_704.habcam.conf
-  pipelines/train_yolo_wtf_704.viame_csv.conf
   pipelines/utility_add_head_tail_keypoints.pipe
   pipelines/utility_add_segmentations_watershed.pipe
   pipelines/utility_empty_frame_lbls_1fr.pipe
   pipelines/utility_empty_frame_lbls_10fr.pipe
   pipelines/utility_empty_frame_lbls_100fr.pipe
   pipelines/utility_empty_frame_lbls_1000fr.pipe )
+
+if( VIAME_ENABLE_DARKNET )
+  set( CORE_PIPELINE_FILES ${CORE_PIPELINE_FILES}
+    pipelines/train_yolo_640.viame_csv.conf
+    pipelines/train_yolo_704.habcam.conf
+    pipelines/train_yolo_704.kw18.conf
+    pipelines/train_yolo_full_res.viame_csv.conf )
+endif()
 
 if( VIAME_ENABLE_VIVIA )
   set( GUI_PIPELINE_FILES

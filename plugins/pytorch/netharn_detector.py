@@ -43,23 +43,12 @@ Notes:
     git submodule add -b release git@gitlab.kitware.com:computer-vision/kwimage.git packages/kwimage
 """
 
-try:
-    # Handle new kwiver structure
-    from kwiver.vital.algo import ImageObjectDetector
+from kwiver.vital.algo import ImageObjectDetector
 
-    from kwiver.vital.types import BoundingBox
-    from kwiver.vital.types import DetectedObjectSet
-    from kwiver.vital.types import DetectedObject
-    from kwiver.vital.types import DetectedObjectType
-
-except ImportError:
-    # Handle old kwiver structure
-    from vital.algo import ImageObjectDetector
-
-    from vital.types import BoundingBox
-    from vital.types import DetectedObjectSet
-    from vital.types import DetectedObject
-    from vital.types import DetectedObjectType
+from kwiver.vital.types import BoundingBoxD
+from kwiver.vital.types import DetectedObjectSet
+from kwiver.vital.types import DetectedObject
+from kwiver.vital.types import DetectedObjectType
 
 import numpy as np
 
@@ -261,13 +250,13 @@ def _kwiver_to_kwimage_detections(detected_objects):
     classes = []
     if len(detected_objects) > 0:
         obj = ub.peek(detected_objects)
-        classes = obj.type().all_class_names()
+        classes = obj.type.all_class_names()
 
     for obj in detected_objects:
-        box = obj.bounding_box()
+        box = obj.bounding_box
         tlbr = [box.min_x(), box.min_y(), box.max_x(), box.max_y()]
-        score = obj.confidence()
-        cname = obj.type().get_most_likely_class()
+        score = obj.confidence
+        cname = obj.type.get_most_likely_class()
         cidx = classes.index(cname)
         boxes.append(tlbr)
         scores.append(score)
@@ -308,7 +297,7 @@ def _kwimage_to_kwiver_detections(detections):
         class_name = detections.classes[cidx]
 
         bbox_int = np.round(tlbr).astype(np.int32)
-        bounding_box = BoundingBox(
+        bounding_box = BoundingBoxD(
             bbox_int[0], bbox_int[1], bbox_int[2], bbox_int[3])
 
         detected_object_type = DetectedObjectType(class_name, score)
@@ -319,7 +308,7 @@ def _kwimage_to_kwiver_detections(detections):
 
 
 def __vital_algorithm_register__():
-    from vital.algo import algorithm_factory
+    from kwiver.vital.algo import algorithm_factory
 
     # Register Algorithm
     implementation_name = "netharn"

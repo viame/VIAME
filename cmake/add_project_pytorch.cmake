@@ -2,7 +2,7 @@
 #
 # Required symbols are:
 #   VIAME_BUILD_PREFIX - where packages are built
-#   VIAME_BUILD_INSTALL_PREFIX - directory install target
+#   VIAME_INSTALL_PREFIX - directory install target
 #   VIAME_PACKAGES_DIR - location of git submodule packages
 #   VIAME_ARGS_COMMON -
 ##
@@ -44,7 +44,7 @@ if( VIAME_ENABLE_PYTORCH-MMDET )
     message( FATAL_ERROR "To use mmdetection you must have at least CUDA 9.0.\n\n"
                          "Install CUDA 9.0+ or disable VIAME_ENABLE_PYTORCH-MMDET" )
   endif()
-  if( NOT VIAME_ENABLE_PYTHON-INTERNAL AND PYTHON_VERSION VERSION_LESS "3.0" )
+  if( NOT VIAME_ENABLE_PYTHON-INTERNAL AND Python_VERSION VERSION_LESS "3.0" )
     message( FATAL_ERROR "To use mmdetection you must have at least Python 3.0.\n\n"
                          "Use Python3 or disable VIAME_ENABLE_PYTORCH-MMDET" )
   endif()
@@ -95,41 +95,26 @@ if( VIAME_ENABLE_PYTORCH-MMDET )
   list( APPEND PYTORCH_ENV_VARS "MMCV_WITH_OPS=1" )
 endif()
 
-set( PYTHON_BASEPATH
-  ${VIAME_BUILD_INSTALL_PREFIX}/lib/python${PYTHON_VERSION} )
-
 if( WIN32 )
-  set( CUSTOM_PYTHONPATH
-    "${PYTHON_BASEPATH};${PYTHON_BASEPATH}/site-packages;${PYTHON_BASEPATH}/dist-packages" )
+  set( EXTRA_INCLUDE_DIRS "${VIAME_INSTALL_PREFIX}/include;$ENV{INCLUDE}" )
+  set( EXTRA_LIBRARY_DIRS "${VIAME_INSTALL_PREFIX}/lib;$ENV{LIB}" )
 
-  set( EXTRA_INCLUDE_DIRS "${VIAME_BUILD_INSTALL_PREFIX}/include;$ENV{INCLUDE}" )
-  set( EXTRA_LIBRARY_DIRS "${VIAME_BUILD_INSTALL_PREFIX}/lib;$ENV{LIB}" )
-
-  string( REPLACE ";" "----" CUSTOM_PYTHONPATH "${CUSTOM_PYTHONPATH}" )
+  string( REPLACE ";" "----" VIAME_PYTHON_PATH "${VIAME_PYTHON_PATH}" )
   string( REPLACE ";" "----" EXTRA_INCLUDE_DIRS "${EXTRA_INCLUDE_DIRS}" )
   string( REPLACE ";" "----" EXTRA_LIBRARY_DIRS "${EXTRA_LIBRARY_DIRS}" )
 
   list( APPEND PYTORCH_ENV_VARS "INCLUDE=${EXTRA_INCLUDE_DIRS}" )
   list( APPEND PYTORCH_ENV_VARS "LIB=${EXTRA_LIBRARY_DIRS}" )
 else()
-  set( CUSTOM_PYTHONPATH
-    ${PYTHON_BASEPATH}:${PYTHON_BASEPATH}/site-packages:${PYTHON_BASEPATH}/dist-packages )
-  if( VIAME_ENABLE_CUDA )
-    set( CUSTOM_PATH
-      ${VIAME_BUILD_INSTALL_PREFIX}/bin:${CUDA_TOOLKIT_ROOT_DIR}/bin:$ENV{PATH} )
-  else()
-    set( CUSTOM_PATH ${VIAME_BUILD_INSTALL_PREFIX}/bin:$ENV{PATH} )
-  endif()
-
-  list( APPEND PYTORCH_ENV_VARS "CPPFLAGS=-I${VIAME_BUILD_INSTALL_PREFIX}/include" )
-  list( APPEND PYTORCH_ENV_VARS "LDFLAGS=-L${VIAME_BUILD_INSTALL_PREFIX}/lib" )
+  list( APPEND PYTORCH_ENV_VARS "CPPFLAGS=-I${VIAME_INSTALL_PREFIX}/include" )
+  list( APPEND PYTORCH_ENV_VARS "LDFLAGS=-L${VIAME_INSTALL_PREFIX}/lib" )
   list( APPEND PYTORCH_ENV_VARS "CC=${CMAKE_C_COMPILER}" )
   list( APPEND PYTORCH_ENV_VARS "CXX=${CMAKE_CXX_COMPILER}" )
-  list( APPEND PYTORCH_ENV_VARS "PATH=${CUSTOM_PATH}" )
+  list( APPEND PYTORCH_ENV_VARS "PATH=${VIAME_EXECUTABLES_PATH}" )
 endif()
 
-list( APPEND PYTORCH_ENV_VARS "PYTHONPATH=${CUSTOM_PYTHONPATH}" )
-list( APPEND PYTORCH_ENV_VARS "PYTHONUSERBASE=${VIAME_BUILD_INSTALL_PREFIX}" )
+list( APPEND PYTORCH_ENV_VARS "PYTHONPATH=${VIAME_PYTHON_PATH}" )
+list( APPEND PYTORCH_ENV_VARS "PYTHONUSERBASE=${VIAME_INSTALL_PREFIX}" )
 
 foreach( LIB ${PYTORCH_LIBS_TO_BUILD} )
   if( "${LIB}" STREQUAL "pytorch" )
@@ -156,24 +141,25 @@ foreach( LIB ${PYTORCH_LIBS_TO_BUILD} )
 
   if( VIAME_SYMLINK_PYTHON )
     set( LIBRARY_PIP_BUILD_CMD
-      ${PYTHON_EXECUTABLE} setup.py build )
+      ${Python_EXECUTABLE} setup.py build )
     set( LIBRARY_PIP_INSTALL_CMD
-      ${PYTHON_EXECUTABLE} -m pip install --user -e . )
+      ${Python_EXECUTABLE} -m pip install --user -e . )
   else()
     if( "${LIB}" STREQUAL "mmcv" OR "${LIB}" STREQUAL "torchvision" )
       set( LIBRARY_PIP_BUILD_CMD
-        ${PYTHON_EXECUTABLE} setup.py
+        ${Python_EXECUTABLE} setup.py
           bdist_wheel -d ${LIBRARY_PIP_BUILD_DIR} )
     else()
       set( LIBRARY_PIP_BUILD_CMD
-        ${PYTHON_EXECUTABLE} setup.py build_ext
-          --include-dirs="${VIAME_BUILD_INSTALL_PREFIX}/include"
-          --library-dirs="${VIAME_BUILD_INSTALL_PREFIX}/lib"
+        ${Python_EXECUTABLE} setup.py build_ext
+          --include-dirs="${VIAME_INSTALL_PREFIX}/include"
+          --library-dirs="${VIAME_INSTALL_PREFIX}/lib"
           --inplace bdist_wheel -d ${LIBRARY_PIP_BUILD_DIR} )
     endif()
     set( LIBRARY_PIP_INSTALL_CMD
       ${CMAKE_COMMAND}
-        -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
+        -DPYTHON_EXECUTABLE=${Python_EXECUTABLE}
+        -DPython_EXECUTABLE=${Python_EXECUTABLE}
         -DWHEEL_DIR=${LIBRARY_PIP_BUILD_DIR}
         -P ${VIAME_CMAKE_DIR}/install_python_wheel.cmake )
   endif()

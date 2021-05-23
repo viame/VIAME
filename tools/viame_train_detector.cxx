@@ -31,7 +31,7 @@
 #include <kwiversys/SystemTools.hxx>
 #include <kwiversys/CommandLineArguments.hxx>
 
-#include <vital/algorithm_plugin_manager_paths.h>
+#include <vital/kwiver-include-paths.h>
 
 #include <vital/plugin_loader/plugin_manager.h>
 #include <vital/plugin_loader/plugin_factory.h>
@@ -906,7 +906,7 @@ main( int argc, char* argv[] )
     kwiver::vital::config_block_keys_t keys;
 
     kwiver::vital::tokenize( setting_key, keys,
-      kwiver::vital::config_block::block_sep,
+      kwiver::vital::config_block::block_sep(),
       kwiver::vital::TokenizeTrimEmpty );
 
     if( keys.size() < 2 )

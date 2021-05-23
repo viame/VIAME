@@ -2,7 +2,7 @@
 from viame.processes.@template_dir@ import @template@_detector
 
 def __sprokit_register__():
-    from sprokit.pipeline import process_factory
+    from kwiver.sprokit.pipeline import process_factory
 
     module_name = 'python:@template_dir@.@template@_detector'
 

@@ -1,6 +1,6 @@
 file( GLOB _wheels LIST_DIRECTORIES FALSE ${WHEEL_DIR}/* )
 execute_process(
-  COMMAND ${PYTHON_EXECUTABLE} -m pip install --user ${_wheels}
+  COMMAND ${Python_EXECUTABLE} -m pip install --user ${_wheels}
   RESULT_VARIABLE _result
   WORKING_DIRECTORY ${WHEEL_DIR}
   )

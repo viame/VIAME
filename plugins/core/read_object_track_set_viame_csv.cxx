@@ -179,6 +179,10 @@ read_object_track_set_viame_csv
 
   if( d->m_batch_load )
   {
+    if( !was_first )
+    {
+      return false;
+    }
     std::vector< kwiver::vital::track_sptr > trks;
 
     for( auto it = d->m_all_tracks.begin(); it != d->m_all_tracks.end(); ++it )
@@ -189,7 +193,12 @@ read_object_track_set_viame_csv
     set = kwiver::vital::object_track_set_sptr(
       new kwiver::vital::object_track_set( trks ) );
 
-    return was_first;
+    return true;
+  }
+
+  if( d->m_current_idx > d->m_last_idx )
+  {
+    return false;
   }
 
   // Return detection set at current index if there is one
@@ -210,8 +219,7 @@ read_object_track_set_viame_csv
 
   ++d->m_current_idx;
 
-  // Return if we are done parsing
-  return this->at_eof();
+  return true;
 }
 
 

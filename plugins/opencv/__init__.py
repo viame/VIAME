@@ -31,7 +31,7 @@ from viame.processes.opencv import ocv_multimodal_registration
 from viame.processes.opencv import ocv_fft_filter_based_on_ref
 
 def __sprokit_register__():
-    from sprokit.pipeline import process_factory
+    from kwiver.sprokit.pipeline import process_factory
 
     module_name = 'python:opencv.opencv_processes'
 

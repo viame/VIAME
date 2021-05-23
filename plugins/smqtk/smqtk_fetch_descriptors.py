@@ -28,8 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from kwiver.kwiver_process import KwiverProcess
-from vital.types import new_descriptor, DescriptorSet
 
+from kwiver.vital.types import new_descriptor, DescriptorSet
 
 class SmqtkFetchDescriptors (KwiverProcess):
     def __init__(self, conf):

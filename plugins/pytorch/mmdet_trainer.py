@@ -30,13 +30,11 @@
 from __future__ import print_function
 from __future__ import division
 
-from vital.algo import TrainDetector
-from vital.algo import DetectedObjectSetOutput
+from kwiver.vital.algo import DetectedObjectSetOutput, TrainDetector
 
-from vital.types import BoundingBox
-from vital.types import CategoryHierarchy
-from vital.types import DetectedObjectSet
-from vital.types import DetectedObject
+from kwiver.vital.types import (
+    BoundingBoxD, CategoryHierarchy, DetectedObject, DetectedObjectSet,
+)
 
 from PIL import Image
 
@@ -266,9 +264,9 @@ class MMDetTrainer( TrainDetector ):
 
             for i, item in enumerate( groundtruth ):
 
-                class_lbl = item.type().get_most_likely_class()
+                class_lbl = item.type.get_most_likely_class()
 
-                if categories is not None and not categories.has_class_id( class_lbl ):
+                if categories is not None and not categories.has_class_name( class_lbl ):
                     continue
 
                 obj_box = [ [ item.bounding_box().min_x(),
@@ -472,7 +470,7 @@ class MMDetTrainer( TrainDetector ):
 
 
 def __vital_algorithm_register__():
-    from vital.algo import algorithm_factory
+    from kwiver.vital.algo import algorithm_factory
 
     # Register Algorithm
     implementation_name = "mmdet"

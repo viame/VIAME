@@ -28,13 +28,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 from __future__ import print_function
 
-from sprokit.pipeline import process
-from kwiver.kwiver_process import KwiverProcess
-from vital.types import Image
-from vital.types import ImageContainer
-from vital.types import DetectedObject
-from vital.types import DetectedObjectSet
-from vital.types import BoundingBox
+from kwiver.sprokit.processes.kwiver_process import KwiverProcess
+from kwiver.sprokit.pipeline import process
+
+from kwiver.vital.types import Image
+from kwiver.vital.types import ImageContainer
+from kwiver.vital.types import DetectedObject
+from kwiver.vital.types import DetectedObjectSet
+from kwiver.vital.types import BoundingBoxD
 
 class hello_world_detector(KwiverProcess):
     """

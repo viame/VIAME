@@ -30,8 +30,8 @@
 from __future__ import print_function
 from __future__ import division
 
-from vital.algo import TrainDetector
-from vital.algo import DetectedObjectSetOutput
+from kwiver.vital.algo import TrainDetector
+from kwiver.vital.algo import DetectedObjectSetOutput
 
 from distutils.util import strtobool
 from shutil import copyfile
@@ -152,7 +152,7 @@ class SMQTKTrainer( TrainDetector ):
         sys.exit( 0 )
 
 def __vital_algorithm_register__():
-    from vital.algo import algorithm_factory
+    from kwiver.vital.algo import algorithm_factory
 
     # Register Algorithm
     implementation_name = "smqtk"

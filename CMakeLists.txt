@@ -1,8 +1,8 @@
 ###
-# top level build file for NOAA VIAME
+# top level build file for the VIAME super-build
 #
 
-cmake_minimum_required( VERSION 3.11.3 )
+cmake_minimum_required( VERSION 3.12.0 )
 set( CMAKE_CXX_STANDARD 11 )
 
 project( VIAME )
@@ -15,8 +15,16 @@ set( VIAME_VERSION "${VIAME_VERSION_MAJOR}.${VIAME_VERSION_MINOR}.${VIAME_VERSIO
 
 include( CMakeDependentOption )
 
+if( POLICY CMP0053 )
+  cmake_policy( SET CMP0053 NEW )
+endif()
+
+if( POLICY CMP0074 )
+  cmake_policy( SET CMP0074 NEW )
+endif()
+
 ###
-# Add paths used throughout CMakeLists files
+# Add common paths usable throughout all CMakeLists files
 ##
 list( INSERT CMAKE_MODULE_PATH 0    "${CMAKE_CURRENT_SOURCE_DIR}/cmake" "${KWIVER_CMAKE_DIR}" )
 
@@ -24,13 +32,24 @@ set( VIAME_SOURCE_DIR               "${CMAKE_SOURCE_DIR}" )
 set( VIAME_CMAKE_DIR                "${CMAKE_SOURCE_DIR}/cmake" )
 set( VIAME_BINARY_DIR               "${CMAKE_BINARY_DIR}/build" )
 set( VIAME_BUILD_PREFIX             "${CMAKE_BINARY_DIR}/build" )
+set( VIAME_PACKAGES_DIR             "${VIAME_SOURCE_DIR}/packages" )
+set( VIAME_DOWNLOAD_DIR             "${VIAME_PACKAGES_DIR}/downloads" )
+
+###
+# Add paths which control the output directories of all final install files
+#
+# When in super-build mode, everything is 'make installed' into these directories
+# at build time ('make') instead of at ('make install') time due to the nature
+# of cmake super-builds.
+##
 set( VIAME_BUILD_INSTALL_PREFIX     "${CMAKE_BINARY_DIR}/install"
      CACHE STRING                   "Installation directory to place all final output files" )
 mark_as_advanced( VIAME_BUILD_INSTALL_PREFIX )
-set( CMAKE_INSTALL_PREFIX           "${VIAME_BUILD_INSTALL_PREFIX}" )
 
-set( VIAME_PACKAGES_DIR             "${VIAME_SOURCE_DIR}/packages" )
-set( VIAME_DOWNLOAD_DIR             "${VIAME_PACKAGES_DIR}/downloads" )
+set( VIAME_INSTALL_PREFIX           "${VIAME_BUILD_INSTALL_PREFIX}"
+     CACHE INTERNAL                 "Synonym for VIAME_BUILD_INSTALL_PREFIX" FORCE )
+set( CMAKE_INSTALL_PREFIX           "${VIAME_BUILD_INSTALL_PREFIX}"
+     CACHE INTERNAL                 "Synonym for VIAME_BUILD_INSTALL_PREFIX" FORCE )
 
 ###
 # GPU and FFMPEG utilization flags used across projects
@@ -44,7 +63,7 @@ option( VIAME_ENABLE_FFMPEG         "Enable FFMPEG-Dependent Code"  ON )
 ##
 option( VIAME_ENABLE_DOCS           "Enable Documentation"          OFF )
 option( VIAME_ENABLE_VIVIA          "Enable Vivia GUIs"             ON )
-option( VIAME_ENABLE_SEAL_TK        "Enable Seal-TK GUIs"           OFF )
+option( VIAME_ENABLE_SEAL_TK        "Enable Seal-TK GUI"            OFF )
 option( VIAME_ENABLE_DIVE           "Enable DIVE GUI"               OFF )
 option( VIAME_ENABLE_KWANT          "Enable KW Scoring Code"        ON )
 
@@ -85,7 +104,7 @@ option( VIAME_ENABLE_GDAL           "Enable GDAL image source"      OFF )
 mark_as_advanced( VIAME_ENABLE_GDAL )
 
 ###
-# Flags relating to examples
+# Flags relating to examples and model downloads
 ##
 option( VIAME_INSTALL_EXAMPLES      "Install existing VIAME examples"     ON )
 option( VIAME_DOWNLOAD_MODELS       "Download example detection models"   ON )
@@ -154,12 +173,12 @@ endif()
 #
 # If VIAME_FORCEBUILD is False, we will assume we dont need to rebuild any
 # other superbuild projects (except for viame). This makes development builds
-# much quicker if just doing development only in VIAME.
+# much quicker if just doing development only in VIAME plugins if OFF.
 option( VIAME_FORCEBUILD "Enable force-building of all subpackages" ON )
 mark_as_advanced( VIAME_FORCEBUILD )
 
 # Should we build a version of python within VIAME itself
-option( VIAME_ENABLE_PYTHON-INTERNAL "Build python within VIAME" OFF )
+option( VIAME_ENABLE_PYTHON-INTERNAL "Build python within VIAME"    OFF )
 mark_as_advanced( VIAME_ENABLE_PYTHON-INTERNAL )
 
 ###
@@ -191,7 +210,7 @@ option( VIAME_BUILD_TESTS "Build VIAME and all sub-packages with tests enabled" 
 mark_as_advanced( VIAME_BUILD_TESTS )
 
 ###
-# Add logic relating to enable flags
+# Add logic and error checking relating to enable flags
 ##
 if( VIAME_ENABLE_CAFFE OR VIAME_ENABLE_SCALLOP_TK OR VIAME_ENABLE_BURNOUT OR
     VIAME_ENABLE_DARKNET )
@@ -229,18 +248,16 @@ if( VIAME_ENABLE_PYTHON )
   if( VIAME_ENABLE_PYTHON-INTERNAL )
     include( setup_internal_python )
   else()
-    find_package( PythonInterp REQUIRED )
-    find_package( PythonLibs REQUIRED )
+    find_package( Python COMPONENTS Interpreter Development REQUIRED )
 
     if( NOT VIAME_DISABLE_PYTHON_CHECKS AND
-        NOT EXISTS ${PYTHON_INCLUDE_DIR}/pyconfig.h )
-      message( FATAL_ERROR "pyconfig.h does not exist in your PYTHON_INCLUDE_DIR "
+        NOT EXISTS ${Python_INCLUDE_DIR}/pyconfig.h )
+      message( FATAL_ERROR "pyconfig.h does not exist in your Python_INCLUDE_DIR "
         "make sure the variable is set correctly and you have python-dev installed." )
     endif()
 
     if( NOT VIAME_DISABLE_PYTHON_CHECKS AND
-        ( NOT PYTHON_VERSION VERSION_EQUAL "3.6" OR
-          NOT PYTHON_VERSION_PATCH EQUAL "5" ) )
+        NOT Python_VERSION VERSION_EQUAL "3.6.5" )
       message( FATAL_ERROR "Short-term, the only tested python distribution is "
         "Anaconda3 5.2.0, either install that version or set the cmake flag "
         "VIAME_DISABLE_PYTHON_CHECKS to attempt to use your current version" )
@@ -251,10 +268,21 @@ if( VIAME_ENABLE_PYTHON )
     message( FATAL_ERROR "Netharn currently also required mmdet enabled" )
   endif()
 
-  set( PYTHON_VERSION "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}"
-       CACHE STRING "Python version number" )
-  set( PYTHON_VERSION_STRING "${PYTHON_VERSION}"
-       CACHE INTERNAL "Python version string" )
+  set( VIAME_PYTHON_VERSION "${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}"
+    CACHE INTERNAL "Version ID used in python install paths" )
+
+  set( PYBASE ${VIAME_BUILD_INSTALL_PREFIX}/lib/python${VIAME_PYTHON_VERSION} )
+  set( VIAME_PYTHON_INSTALL ${PYBASE} CACHE INTERNAL "VIAME Python install path" )
+
+  if( WIN32 )
+    set( VIAME_PYTHON_PATH
+      ${PYBASE};${PYBASE}/site-packages;${PYBASE}/dist-packages
+      CACHE INTERNAL "Pythonpath for all files installed as a part of VIAME" )
+  else()
+    set( VIAME_PYTHON_PATH
+      ${PYBASE}:${PYBASE}/site-packages:${PYBASE}/dist-packages
+      CACHE INTERNAL "Pythonpath for all files installed as a part of VIAME")
+  endif()
 endif()
 
 if( VIAME_ENABLE_VIVIA AND VIAME_ENABLE_SEAL_TK )
@@ -273,8 +301,7 @@ endif()
 
 # VXL enabled triggers yasm to be built, requiring at least some python
 if( VIAME_ENABLE_VXL AND NOT VIAME_ENABLE_PYTHON-INTERNAL )
-  find_package( PythonInterp QUIET )
-  if( NOT PYTHONINTERP_FOUND AND NOT VIAME_ENABLE_PYTHON-INTERNAL )
+  if( NOT Python_FOUND AND NOT VIAME_ENABLE_PYTHON-INTERNAL )
     message( FATAL_ERROR "If VXL is enabled, there must be some python install located \
       on the system to build, even if VIAME_ENABLE_PYTHON is turned off for all other \
       packages. A python binary could not be found. Please install at least python." )
@@ -329,9 +356,29 @@ if( VIAME_ENABLE_CUDA )
   endif()
   set( CUDA_ARCHITECTURES "${DEF_CUDA_ARCHS}" CACHE STRING "CUDA Architectures" )
   mark_as_advanced( CUDA_ARCHITECTURES )
+
+  if( WIN32 )
+    set( VIAME_EXECUTABLES_PATH
+      ${VIAME_BUILD_INSTALL_PREFIX}/bin;${CUDA_TOOLKIT_ROOT_DIR}/bin;$ENV{PATH}
+      CACHE INTERNAL "All compiled and system-related runnable executables" )
+  else()
+    set( VIAME_EXECUTABLES_PATH
+      ${VIAME_BUILD_INSTALL_PREFIX}/bin:${CUDA_TOOLKIT_ROOT_DIR}/bin:$ENV{PATH}
+      CACHE INTERNAL "All compiled and system-related runnable executables" )
+  endif()
 else()
   set( VIAME_FORCE_CUDA_CSTD98 CACHE INTERNAL FALSE )
   set( CUDA_ARCHITECTURES "" CACHE INTERNAL "CUDA Architectures" )
+
+  if( WIN32 )
+    set( VIAME_EXECUTABLES_PATH
+      ${VIAME_BUILD_INSTALL_PREFIX}/bin;$ENV{PATH}
+      CACHE INTERNAL "All compiled and system-related runnable executables" )
+  else()
+    set( VIAME_EXECUTABLES_PATH
+      ${VIAME_BUILD_INSTALL_PREFIX}/bin:$ENV{PATH}
+      CACHE INTERNAL "All compiled and system-related runnable executables" )
+  endif()
 endif()
 
 if( VIAME_ENABLE_CUDNN AND NOT VIAME_ENABLE_CUDA )
@@ -559,6 +606,7 @@ else()
     set( kwiver_plugin_subdir                         viame )
     set( kwiver_plugin_process_subdir                 ${kwiver_plugin_subdir}/processes )
     set( kwiver_plugin_process_instrumentation_subdir ${kwiver_plugin_subdir}/modules )
+    set( kwiver_plugin_algorithm_subdir               ${kwiver_plugin_subdir}/modules )
     set( kwiver_plugin_scheduler_subdir               ${kwiver_plugin_subdir}/processes )
     set( kwiver_plugin_module_subdir                  ${kwiver_plugin_subdir}/modules )
     set( kwiver_plugin_plugin_explorer_subdir         ${kwiver_plugin_subdir}/modules/plugin_explorer )
@@ -566,12 +614,9 @@ else()
 
     # Setup python directories for plugin processes in same style as KWIVER
     if( VIAME_ENABLE_PYTHON )
-      set( kwiver_python_subdir "python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}" )
+      set( kwiver_python_subdir "python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}" )
       set( kwiver_python_output_path "${VIAME_BUILD_PREFIX}/lib/${kwiver_python_subdir}" )
       set( viame_python_install_path "${VIAME_BUILD_INSTALL_PREFIX}/lib/${kwiver_python_subdir}" )
-
-      kwiver_create_python_init( viame )
-      kwiver_create_python_init( viame/processes )
     endif()
 
     ##

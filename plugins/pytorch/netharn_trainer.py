@@ -30,17 +30,17 @@
 from __future__ import print_function
 from __future__ import division
 
-from vital.algo import TrainDetector
-from vital.algo import ImageObjectDetector
-from vital.algo import DetectedObjectSetOutput
+from kwiver.vital.algo import (
+    DetectedObjectSetOutput,
+    ImageObjectDetector,
+    TrainDetector
+)
 
-from vital.types import Image
-from vital.types import ImageContainer
-from vital.types import BoundingBox
-from vital.types import CategoryHierarchy
-from vital.types import DetectedObjectSet
-from vital.types import DetectedObject
-from vital.types import DetectedObjectType
+from kwiver.vital.types import (
+    Image, ImageContainer,
+    BoundingBoxD, CategoryHierarchy,
+    DetectedObjectSet, DetectedObject, DetectedObjectType
+)
 
 from distutils.util import strtobool
 from shutil import copyfile
@@ -240,7 +240,7 @@ class NetHarnTrainer( TrainDetector ):
             if not os.path.exists( self._output_directory ):
                 os.mkdir( self._output_directory )
 
-        from vital.modules.modules import load_known_modules
+        from kwiver.vital.modules import load_known_modules
         load_known_modules()
 
         if not self._no_format:
@@ -299,10 +299,10 @@ class NetHarnTrainer( TrainDetector ):
         use_frame = True
         max_length = int( self._max_scale_wrt_chip * float( self._chip_width ) )
         for i, item in enumerate( init_truth ):
-            if item.type() is None:
+            if item.type is None:
                 continue
-            class_lbl = item.type().get_most_likely_class()
-            if categories is not None and not categories.has_class_id( class_lbl ):
+            class_lbl = item.type.get_most_likely_class()
+            if categories is not None and not categories.has_class_name( class_lbl ):
                 if self._mode == "detection_refiner":
                     class_lbl = self._negative_category
                 else:
@@ -312,12 +312,11 @@ class NetHarnTrainer( TrainDetector ):
             elif class_lbl not in self._categories:
                 self._categories.append( class_lbl )
 
-            truth_type = DetectedObjectType( class_lbl, 1.0 )
-            item.set_type( truth_type )
+            item.type = DetectedObjectType( class_lbl, 1.0 )
 
             if self._mode == "detector" and \
-               ( item.bounding_box().width() > max_length or \
-                 item.bounding_box().height() > max_length ):
+               ( item.bounding_box.width() > max_length or \
+                 item.bounding_box.height() > max_length ):
                 use_frame = False
                 break
 
@@ -435,7 +434,7 @@ class NetHarnTrainer( TrainDetector ):
 
                 # Set new box size for this detection
                 gt.set_bounding_box(
-                  BoundingBox( 0, 0, np.shape( crop )[1], np.shape( crop )[0] ) )
+                  BoundingBoxD( 0, 0, np.shape( crop )[1], np.shape( crop )[0] ) )
                 new_set = DetectedObjectSet()
                 new_set.add( gt )
 
@@ -488,7 +487,7 @@ class NetHarnTrainer( TrainDetector ):
 
                 # Set new box size for this detection
                 det.set_bounding_box(
-                  BoundingBox( 0, 0, np.shape( crop )[1], np.shape( crop )[0] ) )
+                  BoundingBoxD( 0, 0, np.shape( crop )[1], np.shape( crop )[0] ) )
                 det.set_type(
                   DetectedObjectType( self._negative_category, 1.0 ) )
                 new_set = DetectedObjectSet()
@@ -653,7 +652,7 @@ class NetHarnTrainer( TrainDetector ):
                    "there first." )
 
 def __vital_algorithm_register__():
-    from vital.algo import algorithm_factory
+    from kwiver.vital.algo import algorithm_factory
 
     # Register Algorithm
     implementation_name = "netharn"

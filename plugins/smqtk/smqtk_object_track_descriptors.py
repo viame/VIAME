@@ -29,10 +29,10 @@
 
 import json
 
-from sprokit.pipeline import process
+from kwiver.sprokit.processes.kwiver_process import KwiverProcess
+from kwiver.sprokit.pipeline import process
 
-from kwiver.kwiver_process import KwiverProcess
-from vital.types import new_descriptor, DescriptorSet
+from kwiver.vital.types import new_descriptor, DescriptorSet
 
 import smqtk.utils.plugin
 

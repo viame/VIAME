@@ -4,7 +4,7 @@ from viame.processes.hello_world import hello_world_filter
 
 
 def __sprokit_register__():
-    from sprokit.pipeline import process_factory
+    from kwiver.sprokit.pipeline import process_factory
 
     module_name = 'python:hello_world.hello_world_detector'
 

@@ -30,17 +30,25 @@ export SPROKIT_MODULE_PATH=$this_dir/lib/sprokit:$SPROKIT_MODULE_PATH
 export VG_PLUGIN_PATH=$this_dir
 export VIDTK_MODULE_PATH=$this_dir/lib/modules
 
-# Excessive paths for loading python plugins
+# Core python locations
 @SETUP_PYTHON_LIBRARY_PATH@
 export PYTHONPATH=$this_dir/python:$PYTHONPATH
-export PYTHONPATH=$this_dir/lib/python@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@/site-packages:$PYTHONPATH
-export PYTHONPATH=$this_dir/lib/python@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@/dist-packages:$PYTHONPATH
+export PYTHONPATH=$this_dir/lib/python@VIAME_PYTHON_VERSION@/site-packages:$PYTHONPATH
+export PYTHONPATH=$this_dir/lib/python@VIAME_PYTHON_VERSION@/dist-packages:$PYTHONPATH
 export LD_LIBRARY_PATH=$PYTHON_INSTALL_DIR/lib:$LD_LIBRARY_PATH
-export SPROKIT_PYTHON_MODULES=kwiver.arrows.python:kwiver.processes:kwiver.processes.pytorch
-export SPROKIT_PYTHON_MODULES=viame.arrows.core:viame.arrows.pytorch:$SPROKIT_PYTHON_MODULES
+
+# Excessive KWIVER python arrow and process import locations
+export SPROKIT_PYTHON_MODULES=kwiver.sprokit.processes:kwiver.sprokit.schedulers
+export SPROKIT_PYTHON_MODULES=kwiver.sprokit.tests.processes:$SPROKIT_PYTHON_MODULES
+export SPROKIT_PYTHON_MODULES=kwiver.arrows.core:$SPROKIT_PYTHON_MODULES
+export SPROKIT_PYTHON_MODULES=kwiver.arrows.python:$SPROKIT_PYTHON_MODULES
+export SPROKIT_PYTHON_MODULES=kwiver.sprokit.processes.pytorch:$SPROKIT_PYTHON_MODULES
+export SPROKIT_PYTHON_MODULES=viame.arrows.core:$SPROKIT_PYTHON_MODULES
+export SPROKIT_PYTHON_MODULES=viame.arrows.pytorch:$SPROKIT_PYTHON_MODULES
 export SPROKIT_PYTHON_MODULES=viame.arrows.tensorflow:$SPROKIT_PYTHON_MODULES
 export SPROKIT_PYTHON_MODULES=viame.arrows.smqtk:$SPROKIT_PYTHON_MODULES
-export SPROKIT_PYTHON_MODULES=viame.processes:viame.processes.pytorch:$SPROKIT_PYTHON_MODULES
+export SPROKIT_PYTHON_MODULES=viame.processes:$SPROKIT_PYTHON_MODULES
+export SPROKIT_PYTHON_MODULES=viame.processes.pytorch:$SPROKIT_PYTHON_MODULES
 
 # Set default log level
 export KWIVER_DEFAULT_LOG_LEVEL=debug

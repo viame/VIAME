@@ -1,5 +1,4 @@
 import argparse
-import glob
 import itertools as itt
 
 import numpy as np
@@ -151,17 +150,24 @@ def peek_iterable(it):
     x = next(it)
     return x, itt.chain([x], it)
 
-def main(out_file, homog_file, image_glob, **kwargs):
-    main_multi(out_file, [(homog_file, image_glob)], **kwargs)
+def main(out_file, homogs_and_image_lists, **kwargs):
+    if len(homogs_and_image_lists) % 2:
+        raise ValueError("Expected an even-length list of"
+                         " alternating homographies and image lists")
+    hil = iter(homogs_and_image_lists)
+    main_multi(out_file, zip(hil, hil), **kwargs)
 
 def main_multi(
-        out_file, homogs_and_globs, *, optimize_fit=None, zoom=None,
+        out_file, homogs_and_lists, *, optimize_fit=None, zoom=None,
         frames=None, start=None, stop=None, step=None, reverse=None,
 ):
+    def read_image_list(path):
+        with open(path) as f:
+            return [l.rstrip('\n') for l in f]
     images_homogs_refs = ((
-        sorted(glob.iglob(image_glob)),
+        read_image_list(image_list),
         *read_homog_file(homog_file),
-    ) for homog_file, image_glob in homogs_and_globs)
+    ) for homog_file, image_list in homogs_and_lists)
     images_homogs_refs = [tuple(
         x[start:stop] for x in ihr
     ) for ihr in images_homogs_refs]
@@ -174,6 +180,7 @@ def main_multi(
         frame_numbers = range(0, length, step)
     if reverse:
         frame_numbers = frame_numbers[::-1]
+        images_homogs_refs = images_homogs_refs[::-1]
     if len({
             x for _, _, refs in images_homogs_refs
             for x in np.unique(refs[frame_numbers])
@@ -183,12 +190,11 @@ def main_multi(
               for i in tqdm.tqdm(frame_numbers)
               for image_files, _, _ in images_homogs_refs)
     im0, images = peek_iterable(images)
-    rel_homogs_4d = np.stack([
+    rel_homogs = np.stack([
         homogs[frame_numbers] for _, homogs, _ in images_homogs_refs
-    ], axis=1)
-    rel_homogs = rel_homogs_4d.reshape((-1, 3, 3))
+    ], axis=1).reshape((-1, 3, 3))
     if optimize_fit:
-        rel_homog_0 = rel_homogs_4d[-1 if reverse else 0, 0]
+        rel_homog_0 = rel_homogs[-1 if reverse else 0]
         rel_homogs = np.linalg.inv(rel_homog_0) @ rel_homogs
         fit_homog = optimize_homog_fit(rel_homogs, im0.shape[:2])
         rel_homogs = fit_homog @ rel_homogs
@@ -200,8 +206,10 @@ def main_multi(
 def create_parser():
     p = argparse.ArgumentParser()
     p.add_argument('out_file', help='Path to output file')
-    p.add_argument('homog_file', help='Path to homography file')
-    p.add_argument('image_glob', help='(Quoted) glob for input images')
+    p.add_argument('homogs_and_image_lists', nargs='+', metavar='homog/image_list',
+                   help='Even-length list of alternating paths to'
+                   ' homography files and paths to files with'
+                   ' newline-separated image paths, one pair per camera')
     p.add_argument('--frames', type=int, help='Number of frames represented in output')
     p.add_argument('--start', type=int, metavar='N', help='Ignore first N frames')
     p.add_argument('--stop', type=int, metavar='N', help='Ignore frames after the Nth')

@@ -29,12 +29,11 @@
 
 from __future__ import print_function
 
-from vital.algo import ImageObjectDetector
+from kwiver.vital.algo import ImageObjectDetector
 
-from vital.types import BoundingBox
-from vital.types import DetectedObjectSet
-from vital.types import DetectedObject
-from vital.types import DetectedObjectType
+from kwiver.vital.types import (
+    BoundingBoxD, DetectedObject, DetectedObjectSet, DetectedObjectType
+)
 
 from distutils.util import strtobool
 
@@ -150,8 +149,8 @@ class MMDetDetector( ImageObjectDetector ):
                 continue
 
             bbox_int = bbox.astype( np.int32 )
-            bounding_box = BoundingBox( bbox_int[0], bbox_int[1],
-                                        bbox_int[2], bbox_int[3] )
+            bounding_box = BoundingBoxD( bbox_int[0], bbox_int[1],
+                                         bbox_int[2], bbox_int[3] )
 
             class_name = self._labels[ label ]
             detected_object_type = DetectedObjectType( class_name, class_confidence )
@@ -173,7 +172,7 @@ class MMDetDetector( ImageObjectDetector ):
         return output
 
 def __vital_algorithm_register__():
-    from vital.algo import algorithm_factory
+    from kwiver.vital.algo import algorithm_factory
 
     # Register Algorithm
     implementation_name = "mmdet"

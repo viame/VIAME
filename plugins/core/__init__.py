@@ -30,7 +30,7 @@
 from viame.processes.core import utility_processes
 
 def __sprokit_register__():
-    from sprokit.pipeline import process_factory
+    from kwiver.sprokit.pipeline import process_factory
 
     module_name = 'python:core.core_processes'
 

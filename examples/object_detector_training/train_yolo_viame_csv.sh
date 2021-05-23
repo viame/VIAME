@@ -14,5 +14,5 @@ export KWIVER_DEFAULT_LOG_LEVEL=info
 # Run pipeline
 viame_train_detector \
   -i ${INPUT_DIRECTORY} \
-  -c ${VIAME_INSTALL}/configs/pipelines/train_yolo_704.viame_csv.conf \
+  -c ${VIAME_INSTALL}/configs/pipelines/train_yolo_640.viame_csv.conf \
   --threshold 0.0

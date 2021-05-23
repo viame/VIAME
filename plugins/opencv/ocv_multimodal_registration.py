@@ -18,15 +18,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE
 
-from kwiver.kwiver_process import KwiverProcess
-from sprokit.pipeline import process
+from kwiver.sprokit.processes.kwiver_process import KwiverProcess
+from kwiver.sprokit.pipeline import process
 
-from vital.types import Image
-from vital.types import ImageContainer
-from vital.types import Homography
+from kwiver.vital.types import Image
+from kwiver.vital.types import ImageContainer
+from kwiver.vital.types import F2FHomography
 
 from PIL import Image as pil_image
-from vital.util.VitalPIL import get_pil_image, from_pil
+from kwiver.vital.util.VitalPIL import get_pil_image, from_pil
 
 import cv2
 import csv
@@ -266,9 +266,9 @@ class register_frames_process( KwiverProcess ):
               ( thermal_npy.shape[1], thermal_npy.shape[0] ) )
 
             #self.push_to_port_using_trait( 'thermal_to_optical_homog',
-            #   Homography.from_matrix( transform, 'd' )
+            #   F2FHomography.from_matrix( transform, 'd' )
             #self.push_to_port_using_trait( 'optical_to_thermal_homog',
-            #   Homography.from_matrix( inv_transform, 'd' )
+            #   F2FHomography.from_matrix( inv_transform, 'd' )
 
             self.push_to_port_using_trait( 'warped_thermal_image',
               ImageContainer.fromarray( thermal_warped ) )
@@ -277,8 +277,8 @@ class register_frames_process( KwiverProcess ):
         else:
             print( 'alignment failed!' )
 
-            #self.push_to_port_using_trait( "thermal_to_optical_homog", Homography() )
-            #self.push_to_port_using_trait( "optical_to_thermal_homog", Homography() )
+            #self.push_to_port_using_trait( "thermal_to_optical_homog", F2FHomography() )
+            #self.push_to_port_using_trait( "optical_to_thermal_homog", F2FHomography() )
 
             self.push_to_port_using_trait( 'warped_optical_image', ImageContainer() )
             self.push_to_port_using_trait( 'warped_thermal_image', ImageContainer() )

@@ -42,23 +42,12 @@ Notes:
     git submodule add -b release git@gitlab.kitware.com:computer-vision/kwimage.git packages/kwimage
 """
 
-try:
-    # Handle new kwiver structure
-    from kwiver.vital.algo import ImageObjectDetector
+from kwiver.vital.algo import ImageObjectDetector
 
-    from kwiver.vital.types import BoundingBox
-    from kwiver.vital.types import DetectedObjectSet
-    from kwiver.vital.types import DetectedObject
-    from kwiver.vital.types import DetectedObjectType
-
-except ImportError:
-    # Handle old kwiver structure
-    from vital.algo import ImageObjectDetector
-
-    from vital.types import BoundingBox
-    from vital.types import DetectedObjectSet
-    from vital.types import DetectedObject
-    from vital.types import DetectedObjectType
+from kwiver.vital.types import BoundingBoxD
+from kwiver.vital.types import DetectedObjectSet
+from kwiver.vital.types import DetectedObject
+from kwiver.vital.types import DetectedObjectType
 
 import numpy as np  # NOQA
 import ubelt as ub
@@ -260,7 +249,7 @@ def _classification_to_kwiver_detections(classification, w, h):
         class_score = classification.conf
         detected_object_type = DetectedObjectType(class_name, class_score)
 
-    bounding_box = BoundingBox(0, 0, w, h)
+    bounding_box = BoundingBoxD(0, 0, w, h)
     detected_object = DetectedObject(
         bounding_box, classification.conf, detected_object_type)
     detected_objects.add(detected_object)
@@ -278,7 +267,7 @@ def __vital_algorithm_register__():
         def _register_algorithm(cls, name=None, desc=''):
             if name is None:
                 name = cls.__name__
-            from vital.algo import algorithm_factory
+            from kwiver.vital.algo import algorithm_factory
             if not algorithm_factory.has_algorithm_impl_name(cls.static_type_name(), name):
                 algorithm_factory.add_algorithm(name, desc, cls)
                 algorithm_factory.mark_algorithm_as_loaded(name)
@@ -314,7 +303,7 @@ def __vital_algorithm_register__():
         # We could also play with adding class member variables for the lazy
         # initialization. There is lots of room to make this better / easier.
     """
-    from vital.algo import algorithm_factory
+    from kwiver.vital.algo import algorithm_factory
 
     # Register Algorithm
     implementation_name = "netharn_classifier"

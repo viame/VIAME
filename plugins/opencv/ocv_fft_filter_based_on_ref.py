@@ -27,14 +27,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from kwiver.kwiver_process import KwiverProcess
-from sprokit.pipeline import process
+from kwiver.sprokit.processes.kwiver_process import KwiverProcess
+from kwiver.sprokit.pipeline import process
 
-from vital.types import Image
-from vital.types import ImageContainer
+from kwiver.vital.types import Image
+from kwiver.vital.types import ImageContainer
 
 from PIL import Image as pil_image
-from vital.util.VitalPIL import get_pil_image, from_pil
+from kwiver.vital.util.VitalPIL import get_pil_image, from_pil
 
 import cv2
 import numpy as np

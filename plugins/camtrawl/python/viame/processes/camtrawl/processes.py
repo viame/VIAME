@@ -89,14 +89,18 @@ SeeAlso
     ~/code/VIAME/packages/kwiver/vital/bindings/python/vital/types
 """
 from __future__ import absolute_import, print_function, division
+
 import numpy as np
 import vital.types
-from sprokit.pipeline import process
-from sprokit.pipeline import datum  # NOQA
-from kwiver.kwiver_process import KwiverProcess
+
+from kwiver.sprokit.processes.kwiver_process import KwiverProcess
+from kwiver.sprokit.pipeline import process
+from kwiver.sprokit.pipeline import datum  # NOQA
+
 import ubelt as ub
 import os
 import itertools as it
+
 from . import algos as ctalgo
 
 from sprokit import sprokit_logging
@@ -190,9 +194,9 @@ class CamtrawlDetectFishProcess(KwiverProcess):
         Example:
             >>> from viame.processes.camtrawl.processes import *
             >>> from vital.types import ImageContainer
-            >>> import sprokit.pipeline.config
+            >>> import kwiver.sprokit.pipeline.config
             >>> # construct dummy process instance
-            >>> conf = sprokit.pipeline.config.empty_config()
+            >>> conf = kwiver.sprokit.pipeline.config.empty_config()
             >>> self = CamtrawlDetectFishProcess(conf)
             >>> self._configure()
             >>> # construct test data
@@ -405,7 +409,7 @@ class CamtrawlMeasureProcess(KwiverProcess):
 
 def __sprokit_register__():
 
-    from sprokit.pipeline import process_factory
+    from kwiver.sprokit.pipeline import process_factory
 
     module_name = 'python_' + __name__
 

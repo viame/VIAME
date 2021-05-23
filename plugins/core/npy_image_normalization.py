@@ -29,10 +29,10 @@
 
 from __future__ import print_function
 
-from vital.algo import ImageFilter
+from kwiver.vital.algo import ImageFilter
 
-from vital.types import Image
-from vital.types import ImageContainer
+from kwiver.vital.types import Image
+from kwiver.vital.types import ImageContainer
 
 import numpy as np
 
@@ -67,7 +67,7 @@ class PercentileNorm16BitTo8Bit( ImageFilter ):
     return output
 
 def __vital_algorithm_register__():
-  from vital.algo import algorithm_factory
+  from kwiver.vital.algo import algorithm_factory
 
   # Register Algorithm
   implementation_name  = "npy_percentile_norm"

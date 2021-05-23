@@ -2,7 +2,7 @@
 #
 # Required symbols are:
 #   VIAME_BUILD_PREFIX - where packages are built
-#   VIAME_BUILD_INSTALL_PREFIX - directory install target
+#   VIAME_INSTALL_PREFIX - directory install target
 #   VIAME_PACKAGES_DIR - location of git submodule packages
 #   VIAME_ARGS_COMMON -
 ##
@@ -25,7 +25,7 @@ ExternalProject_Add(kwant
     ${VIAME_ARGS_kwiver}
     ${VIAME_PYTHON_FLAGS}
 
-  INSTALL_DIR ${VIAME_BUILD_INSTALL_PREFIX}
+  INSTALL_DIR ${VIAME_INSTALL_PREFIX}
   )
 
 if ( VIAME_FORCEBUILD )

@@ -34,16 +34,24 @@ export QT_PLUGIN_PATH=$this_dir/lib/qt4/plugins
 export VG_PLUGIN_PATH=$this_dir
 export VIDTK_MODULE_PATH=$this_dir/lib/modules
 
-# Excessive paths for loading python plugins
+# Core python locations
 export PYTHON_LIBRARY=$this_dir/lib/libpython3.6m.so
 export PYTHONPATH=$this_dir/python:$this_dir/lib/python3.6
 export PYTHONPATH=$this_dir/lib/python3.6/site-packages:$PYTHONPATH
 export PYTHONPATH=$this_dir/lib/python3.6/dist-packages:$PYTHONPATH
-export SPROKIT_PYTHON_MODULES=kwiver.arrows.python:kwiver.processes:kwiver.processes.pytorch
-export SPROKIT_PYTHON_MODULES=viame.arrows.core:viame.arrows.pytorch:$SPROKIT_PYTHON_MODULES
+
+# Excessive KWIVER python arrow and process import locations
+export SPROKIT_PYTHON_MODULES=kwiver.sprokit.processes:kwiver.sprokit.schedulers
+export SPROKIT_PYTHON_MODULES=kwiver.sprokit.tests.processes:$SPROKIT_PYTHON_MODULES
+export SPROKIT_PYTHON_MODULES=kwiver.arrows.core:$SPROKIT_PYTHON_MODULES
+export SPROKIT_PYTHON_MODULES=kwiver.arrows.python:$SPROKIT_PYTHON_MODULES
+export SPROKIT_PYTHON_MODULES=kwiver.sprokit.processes.pytorch:$SPROKIT_PYTHON_MODULES
+export SPROKIT_PYTHON_MODULES=viame.arrows.core:$SPROKIT_PYTHON_MODULES
+export SPROKIT_PYTHON_MODULES=viame.arrows.pytorch:$SPROKIT_PYTHON_MODULES
 export SPROKIT_PYTHON_MODULES=viame.arrows.tensorflow:$SPROKIT_PYTHON_MODULES
 export SPROKIT_PYTHON_MODULES=viame.arrows.smqtk:$SPROKIT_PYTHON_MODULES
-export SPROKIT_PYTHON_MODULES=viame.processes:viame.processes.pytorch:$SPROKIT_PYTHON_MODULES
+export SPROKIT_PYTHON_MODULES=viame.processes:$SPROKIT_PYTHON_MODULES
+export SPROKIT_PYTHON_MODULES=viame.processes.pytorch:$SPROKIT_PYTHON_MODULES
 
 # Set default log level
 export KWIVER_DEFAULT_LOG_LEVEL=info

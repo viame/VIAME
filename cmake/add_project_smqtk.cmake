@@ -2,7 +2,7 @@
 #
 # Required symbols are:
 #   VIAME_BUILD_PREFIX - where packages are built
-#   VIAME_BUILD_INSTALL_PREFIX - directory install target
+#   VIAME_INSTALL_PREFIX - directory install target
 #   VIAME_PACKAGES_DIR - location of git submodule packages
 #   VIAME_ARGS_COMMON -
 ##
@@ -26,28 +26,17 @@ else()
   set( SMQTK_PIP_CMD
     pip install --user file://${VIAME_PACKAGES_DIR}/smqtk\#egg=smqtk[postgres] )
 endif()
-set( PYTHON_BASEPATH
-  ${VIAME_BUILD_INSTALL_PREFIX}/lib/python${PYTHON_VERSION} )
 
 if( WIN32 )
-  set( CUSTOM_PYTHONPATH
-    ${PYTHON_BASEPATH};${PYTHON_BASEPATH}/site-packages;${PYTHON_BASEPATH}/dist-packages )
-  set( CUSTOM_PATH
-    ${VIAME_BUILD_INSTALL_PREFIX}/bin;$ENV{PATH} )
-  string( REPLACE ";" "----" CUSTOM_PYTHONPATH "${CUSTOM_PYTHONPATH}" )
-  string( REPLACE ";" "----" CUSTOM_PATH "${CUSTOM_PATH}" )
-else()
-  set( CUSTOM_PYTHONPATH
-    ${PYTHON_BASEPATH}:${PYTHON_BASEPATH}/site-packages:${PYTHON_BASEPATH}/dist-packages )
-  set( CUSTOM_PATH
-    ${VIAME_BUILD_INSTALL_PREFIX}/bin:$ENV{PATH} )
+  string( REPLACE ";" "----" VIAME_PYTHON_PATH "${VIAME_PYTHON_PATH}" )
+  string( REPLACE ";" "----" VIAME_EXECUTABLES_PATH "${VIAME_EXECUTABLES_PATH}" )
 endif()
 
 set( SMQTK_PYTHON_INSTALL
-  ${CMAKE_COMMAND} -E env "PYTHONPATH=${CUSTOM_PYTHONPATH}"
-                          "PATH=${CUSTOM_PATH}"
-                          "PYTHONUSERBASE=${VIAME_BUILD_INSTALL_PREFIX}"
-    ${PYTHON_EXECUTABLE} -m ${SMQTK_PIP_CMD}
+  ${CMAKE_COMMAND} -E env "PYTHONPATH=${VIAME_PYTHON_PATH}"
+                          "PATH=${VIAME_EXECUTABLES_PATH}"
+                          "PYTHONUSERBASE=${VIAME_INSTALL_PREFIX}"
+    ${Python_EXECUTABLE} -m ${SMQTK_PIP_CMD}
   )
 
 ExternalProject_Add( smqtk
@@ -66,7 +55,7 @@ ExternalProject_Add( smqtk
     ${VIAME_PYTHON_FLAGS}
     ${VIAME_CUDA_FLAGS}
 
-  INSTALL_DIR ${VIAME_BUILD_INSTALL_PREFIX}
+  INSTALL_DIR ${VIAME_INSTALL_PREFIX}
   LIST_SEPARATOR "----"
   )
 
@@ -82,7 +71,7 @@ ExternalProject_Add_Step(smqtk install_cleanup
   COMMAND ${CMAKE_COMMAND}
     -DVIAME_CMAKE_DIR:PATH=${VIAME_CMAKE_DIR}
     -DVIAME_BUILD_PREFIX:PATH=${VIAME_BUILD_PREFIX}
-    -DVIAME_BUILD_INSTALL_PREFIX:PATH=${VIAME_BUILD_INSTALL_PREFIX}
+    -DVIAME_INSTALL_PREFIX:PATH=${VIAME_INSTALL_PREFIX}
     -DVIAME_ENABLE_SMQTK=${VIAME_ENABLE_SMQTK}
     -P ${VIAME_SOURCE_DIR}/cmake/custom_smqtk_install.cmake
   COMMENT "Performing SMQTK Cleanup."

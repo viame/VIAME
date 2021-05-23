@@ -32,10 +32,9 @@ import json
 
 from six.moves import zip
 
-from sprokit.pipeline import process
-from sprokit.pipeline import datum
-
-from kwiver.kwiver_process import KwiverProcess
+from kwiver.sprokit.processes.kwiver_process import KwiverProcess
+from kwiver.sprokit.pipeline import process
+from kwiver.sprokit.pipeline import datum
 
 import smqtk.algorithms
 import smqtk.iqr
@@ -281,13 +280,13 @@ class SmqtkProcessQuery (KwiverProcess):
         #
         # Set/vector of descriptors to perform query off of
         #
-        #: :type: vital.types.DescriptorSet
+        #: :type: kwiver.vital.types.DescriptorSet
         vital_positive_descriptor_set = self.grab_input_using_trait('positive_descriptor_set')
         vital_positive_descriptor_uids = self.grab_input_using_trait('positive_exemplar_uids')
         #
         # Set/vector of descriptors to use as negative examples
         #
-        #: :type: vital.types.DescriptorSet
+        #: :type: kwiver.vital.types.DescriptorSet
         vital_negative_descriptor_set = self.grab_input_using_trait('negative_descriptor_set')
         vital_negative_descriptor_uids = self.grab_input_using_trait('negative_exemplar_uids')
         #
@@ -299,7 +298,7 @@ class SmqtkProcessQuery (KwiverProcess):
         #
         # Optional input SVM model
         #
-        #: :type: vital.types.UCharVector
+        #: :type: kwiver.vital.types.UCharVector
         iqr_query_model = self.grab_input_using_trait('iqr_query_model')
 
         # Reset index on new query, a new query is one without IQR feedback

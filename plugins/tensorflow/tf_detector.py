@@ -1,14 +1,14 @@
 
 from __future__ import print_function
 
-from vital.algo import ImageObjectDetector
+from kwiver.vital.algo import ImageObjectDetector
 
-from vital.types import Image
-from vital.types import ImageContainer
-from vital.types import DetectedObject
-from vital.types import DetectedObjectSet
-from vital.types import DetectedObjectType
-from vital.types import BoundingBox
+from kwiver.vital.types import Image
+from kwiver.vital.types import ImageContainer
+from kwiver.vital.types import DetectedObject
+from kwiver.vital.types import DetectedObjectSet
+from kwiver.vital.types import DetectedObjectType
+from kwiver.vital.types import BoundingBoxD
 
 from vital.util.VitalPIL import get_pil_image
 
@@ -122,7 +122,7 @@ class TFDetector( ImageObjectDetector ):
          ymax = bottom_rel * image_height
 
          dot = DetectedObjectType(self.category_name, scores[i])
-         obj = DetectedObject(BoundingBox(xmin, ymin, xmax, ymax), scores[i], dot)
+         obj = DetectedObject(BoundingBoxD(xmin, ymin, xmax, ymax), scores[i], dot)
          detections.add(obj)
 
     print("Detected {}".format(len(good_boxes)))
@@ -237,7 +237,7 @@ class TFDetector( ImageObjectDetector ):
     return bottom, top
 
 def __vital_algorithm_register__():
-  from vital.algo import algorithm_factory
+  from kwiver.vital.algo import algorithm_factory
 
   # Register Algorithm
   implementation_name  = "tensorflow"
