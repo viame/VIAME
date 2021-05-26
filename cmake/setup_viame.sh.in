@@ -42,8 +42,8 @@ export SPROKIT_PYTHON_MODULES=viame.arrows.tensorflow:$SPROKIT_PYTHON_MODULES
 export SPROKIT_PYTHON_MODULES=viame.arrows.smqtk:$SPROKIT_PYTHON_MODULES
 export SPROKIT_PYTHON_MODULES=viame.processes:viame.processes.pytorch:$SPROKIT_PYTHON_MODULES
 
-# Set default log level
-export KWIVER_DEFAULT_LOG_LEVEL=debug
+# Set default log level if not defined.
+export KWIVER_DEFAULT_LOG_LEVEL=${KWIVER_DEFAULT_LOG_LEVEL:-debug}
 
 # Paths for matlab (empty if not built with matlab)
 @SETUP_MATLAB_LIBRARY_PATH@
