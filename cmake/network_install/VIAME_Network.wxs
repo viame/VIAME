@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" 
+	  xmlns:bal="http://schemas.microsoft.com/wix/BalExtension"
+    RequiredVersion="3.6.3303.0">
+  <Bundle
+        Name="VIAME Toolkit"
+        Version="0.12.1"
+        UpgradeCode="91A46E15-EE49-4411-9836-583499D9C12F">
+
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLargeLicense" >
+      <bal:WixStandardBootstrapperApplication LicenseUrl="https://raw.githubusercontent.com/VIAME/VIAME/master/LICENSE.txt"
+                                              ThemeFile="VIAME_options.xml"
+                                              LogoFile="VIAME_32px.png"/>
+    </BootstrapperApplicationRef>
+
+    <Chain>
+      <MsiPackage
+        SourceFile="VIAME-1.0.0-win64.msi"
+        Name="VIAME-1.0.0-win64.msi"
+        Id="VIAME"
+        DisplayInternalUI="yes">
+      </MsiPackage>
+      <MsiPackage Id="VIAME_Dive"
+            Name="VIAME-Dive-1.3.0.msi"
+            Compressed="yes"
+            DisplayInternalUI="yes"
+            DownloadUrl="https://github.com/VIAME/VIAME-Web/releases/download/1.3.0/VIAME-Dive-1.3.0.msi"
+            DisplayName="Downloading VIAME-Dive Installer"
+            InstallCondition="VIAME_DiveCheckbox=1">
+      </MsiPackage>
+      <?include "VIAME_Chain_File.wxs"?>
+    </Chain>
+  </Bundle>
+</Wix>
